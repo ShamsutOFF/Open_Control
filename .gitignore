@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+/buildSrc/build/libs/buildSrc.jar
+/buildSrc/build/kotlin/buildSrcjar-classes.txt
+/.idea/sonarlint/issuestore/index.pb
+/.idea/sonarlint/securityhotspotstore/index.pb
+/buildSrc/build/tmp/jar/MANIFEST.MF
+/.idea/*
