@@ -3,24 +3,33 @@ package com.example.opencontrol
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,69 +41,81 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             OpenControlTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MainScreen()
+                    val navController = rememberNavController()
+                    NavHost(navController, startDestination = Screen.Login.route) {
+                        composable(Screen.Login.route) { LoginScreen(navController) }
+                        composable(Screen.Main.route) { MainScreen() }
+                    }
                 }
             }
         }
     }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreen() {
-    val navController = rememberNavController()
-    Scaffold(
-        bottomBar = {
-            BottomNavigation {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
-                val tabs = listOf(
-                    Screen.Tab1,
-                    Screen.Tab2,
-                    Screen.Tab3,
-                    Screen.Tab4
-                )
-                tabs.forEach { screen ->
-                    BottomNavigationItem(
-                        icon = { Icon(screen.icon, contentDescription = null) },
-                        selected = currentRoute == screen.route,
-                        onClick = {
-                            navController.navigate(screen.route) {
-                                navController.graph.startDestinationRoute?.let { route ->
-                                    popUpTo(route) {
-                                        saveState = true
-                                    }
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun MainScreen() {
+        val navController = rememberNavController()
+        Scaffold(
+            bottomBar = {
+                BottomNavigation(backgroundColor = Color.White) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    val tabs = listOf(
+                        Screen.Tab1,
+                        Screen.Tab2,
+                        Screen.Tab3,
+                        Screen.Tab4
                     )
+                    tabs.forEach { screen ->
+                        BottomNavigationItem(
+                            icon = {
+                                Icon(
+                                    screen.icon,
+                                    contentDescription = null,
+                                    tint = Color.Red
+                                )
+                            },
+                            selected = currentRoute == screen.route,
+                            onClick = {
+                                navController.navigate(screen.route) {
+                                    navController.graph.startDestinationRoute?.let { route ->
+                                        popUpTo(route) {
+                                            saveState = true
+                                        }
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        )
+                    }
                 }
             }
-        }
-    ) { innerPadding ->
-        NavHost(
-            navController,
-            startDestination = Screen.Tab1.route,
-            Modifier.padding(innerPadding)
-        ) {
-            composable(Screen.Tab1.route) { FirstScreen() }
-            composable(Screen.Tab2.route) { SecondScreen() }
-            composable(Screen.Tab3.route) { ThirdScreen() }
-            composable(Screen.Tab4.route) { FourthScreen() }
+        ) { innerPadding ->
+            NavHost(
+                navController,
+                startDestination = Screen.Tab1.route,
+                Modifier.padding(innerPadding)
+            ) {
+                composable(Screen.Tab1.route) { FirstScreen() }
+                composable(Screen.Tab2.route) { SecondScreen() }
+                composable(Screen.Tab3.route) { ThirdScreen() }
+                composable(Screen.Tab4.route) { FourthScreen() }
+            }
         }
     }
-}
 
-sealed class Screen(val route: String, val icon: ImageVector) {
-    object Tab1 : Screen("tab1", Icons.Filled.Home)
-    object Tab2 : Screen("tab2", Icons.Filled.Favorite)
-    object Tab3 : Screen("tab3", Icons.Filled.AccountBox)
-    object Tab4 : Screen("tab4", Icons.Filled.Settings)
+    sealed class Screen(val route: String, val icon: ImageVector) {
+        object Login : Screen("login", Icons.Outlined.Home)
+        object Main : Screen("main", Icons.Outlined.Home)
+        object Tab1 : Screen("tab1", Icons.Outlined.Home)
+        object Tab2 : Screen("tab2", Icons.Outlined.Edit)
+        object Tab3 : Screen("tab3", Icons.Outlined.MailOutline)
+        object Tab4 : Screen("tab4", Icons.Outlined.Person)
+    }
 }
