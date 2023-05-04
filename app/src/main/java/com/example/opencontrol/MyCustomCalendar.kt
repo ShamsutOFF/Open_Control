@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -60,32 +59,40 @@ fun MyCalendarView(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        //  MonthSelector
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = { monthOffset-- }) {
-                Icon(Icons.Filled.KeyboardArrowLeft, null)
-            }
-
-            Text(
-                text = "$monthTitle $yearTitle",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
-
-            IconButton(onClick = { monthOffset++ }) {
-                Icon(Icons.Filled.KeyboardArrowRight, null)
-            }
-        }
+        MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
         WeekdayHeader()
         DaysGrid(currentMonth, selectedDate, onDateSelected)
+    }
+}
 
+@Composable
+private fun MonthSelector(
+    monthOffset: Int,
+    monthTitle: String,
+    yearTitle: String,
+    function: (Int) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        IconButton(onClick = { function(monthOffset - 1) }) {
+            Icon(Icons.Filled.KeyboardArrowLeft, null)
+        }
+
+        Text(
+            text = "$monthTitle $yearTitle",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f)
+        )
+
+        IconButton(onClick = { function(monthOffset + 1) }) {
+            Icon(Icons.Filled.KeyboardArrowRight, null)
+        }
     }
 }
 
@@ -122,11 +129,12 @@ private fun DaysGrid(
     }
 }
 
-
 @Composable
 private fun WeekdayHeader() {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -153,7 +161,6 @@ fun DayView(
 ) {
     val isSelected = date == selectedDate
     val isToday = date == LocalDate.now()
-    val isFutureDate = date > LocalDate.now()
 
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     val cellWidth = screenWidthDp / 7
@@ -167,17 +174,11 @@ fun DayView(
                 when {
                     isSelected -> MaterialTheme.colors.secondary
                     isToday -> MaterialTheme.colors.primary.copy(alpha = 0.4f)
-//                    else -> MaterialTheme.colors.secondary
                     else -> Color.Transparent
                 }
             )
             .clickable { onDateSelected(date) }
             .aspectRatio(1f)
-
-//            .then(
-//                if (isFutureDate) Modifier.clickable(enabled = false) { }
-//                else Modifier.clickable { onDateSelected(date) }
-//            )
     ) {
         Text(
             text = date.dayOfMonth.toString(),
