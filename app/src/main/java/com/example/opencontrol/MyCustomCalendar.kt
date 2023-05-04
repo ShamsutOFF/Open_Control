@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -105,8 +106,7 @@ private fun DaysGrid(
 ) {
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = currentMonth.atDay(1).dayOfWeek.value % 7
-    val firstEmptyCells = firstDayOfMonth - 1
-
+    val firstEmptyCells = if (firstDayOfMonth - 1 < 0) 6 else firstDayOfMonth - 1
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),

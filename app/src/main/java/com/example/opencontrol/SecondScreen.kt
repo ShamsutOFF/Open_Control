@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import timber.log.Timber
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -19,6 +20,6 @@ fun SecondScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        MyCalendarView(LocalDate.now()) { println("$it") }
+        MyCalendarView(LocalDate.now()) { Timber.d("Selected date = $it") }
     }
 }
