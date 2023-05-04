@@ -8,9 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ThirdScreen() {
+fun HomeTab() {
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()) {
-        Text(text = "ThirdScreen")
+        Text(text = "FirstScreen")
     }
 }

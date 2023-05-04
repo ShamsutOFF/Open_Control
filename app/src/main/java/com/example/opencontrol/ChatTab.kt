@@ -8,9 +8,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun FourthScreen() {
+fun ChatTab() {
     Box(contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()) {
-        Text(text = "FourthScreen")
+        Text(text = "ThirdScreen")
     }
 }

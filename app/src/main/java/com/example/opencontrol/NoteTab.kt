@@ -14,7 +14,7 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SecondScreen() {
+fun NoteTab() {
     val selectedDate = remember { mutableStateOf("") }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

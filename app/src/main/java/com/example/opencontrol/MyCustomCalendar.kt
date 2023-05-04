@@ -97,6 +97,29 @@ private fun MonthSelector(
     }
 }
 
+@Composable
+private fun WeekdayHeader() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val weekdays = WeekDays.values()
+        weekdays.forEach {
+            Text(
+                text = it.shortName,
+                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun DaysGrid(
@@ -125,29 +148,6 @@ private fun DaysGrid(
                     onDateSelected = onDateSelected
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun WeekdayHeader() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val weekdays = WeekDays.values()
-        weekdays.forEach {
-            Text(
-                text = it.shortName,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.weight(1f)
-            )
         }
     }
 }
