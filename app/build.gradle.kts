@@ -56,6 +56,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.5.3")
     implementation("androidx.compose.material:material:1.3.1")
 
+    implementation ("com.jakewharton.timber:timber:5.0.1")
+
     implementation(platform("androidx.compose:compose-bom:2022.10.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
