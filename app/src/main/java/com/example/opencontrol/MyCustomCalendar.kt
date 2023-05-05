@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,11 +55,11 @@ fun MyCalendarView(
     var monthOffset by remember { mutableStateOf(0) }
     val currentMonth = YearMonth.now().plusMonths(monthOffset.toLong())
     val monthTitle = currentMonth.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale("ru"))
-        .capitalize(Locale.getDefault())
     val yearTitle = currentMonth.year.toString()
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
         WeekdayHeader()
@@ -77,21 +78,21 @@ private fun MonthSelector(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { function(monthOffset - 1) }) {
+        IconButton(onClick = { function(monthOffset - 1) },modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowLeft, null)
         }
 
         Text(
             text = "$monthTitle $yearTitle",
-            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(onClick = { function(monthOffset + 1) }) {
+        IconButton(onClick = { function(monthOffset + 1) },modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowRight, null)
         }
     }
@@ -112,7 +113,7 @@ private fun WeekdayHeader() {
                 text = it.shortName,
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)
             )
@@ -133,7 +134,8 @@ private fun DaysGrid(
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
         items(firstEmptyCells + daysInMonth) { dayIndex ->
             if (dayIndex < firstEmptyCells) {
@@ -187,8 +189,8 @@ fun DayView(
                 isToday -> MaterialTheme.colors.primary
                 else -> MaterialTheme.colors.onSurface
             },
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
             modifier = Modifier.align(Alignment.Center)
         )
