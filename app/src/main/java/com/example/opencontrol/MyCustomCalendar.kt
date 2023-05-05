@@ -3,6 +3,7 @@ package com.example.opencontrol
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -35,12 +35,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import timber.log.Timber
+import com.example.opencontrol.ui.theme.Invisible
+import com.example.opencontrol.ui.theme.LightColors
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -81,7 +81,7 @@ private fun MonthSelector(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { function(monthOffset - 1) },modifier = Modifier.weight(1f)) {
+        IconButton(onClick = { function(monthOffset - 1) }, modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowLeft, null)
         }
 
@@ -92,7 +92,7 @@ private fun MonthSelector(
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(onClick = { function(monthOffset + 1) },modifier = Modifier.weight(1f)) {
+        IconButton(onClick = { function(monthOffset + 1) }, modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowRight, null)
         }
     }
@@ -174,10 +174,19 @@ fun DayView(
             .clip(CircleShape)
             .background(
                 when {
-                    isSelected -> MaterialTheme.colors.secondary
-                    isToday -> MaterialTheme.colors.primary.copy(alpha = 0.4f)
+                    isSelected -> LightColors.primary
+//                    isToday -> LightColors.primary.copy(alpha = 0.4f)
                     else -> Color.Transparent
                 }
+            )
+            .border(
+                width = when {
+                    isToday -> 2.dp
+                    else -> 0.dp
+                }, color = when {
+                    isToday -> LightColors.primary
+                    else -> Invisible
+                }, shape = CircleShape
             )
             .clickable { onDateSelected(date) }
             .aspectRatio(1f)
@@ -185,7 +194,7 @@ fun DayView(
         Text(
             text = date.dayOfMonth.toString(),
             color = when {
-                isSelected -> MaterialTheme.colors.onSecondary
+                isSelected -> LightColors.onPrimary
                 isToday -> MaterialTheme.colors.primary
                 else -> MaterialTheme.colors.onSurface
             },

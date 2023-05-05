@@ -30,7 +30,7 @@ import java.time.LocalDate
 fun NoteTab() {
     var selectedDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     Column() {
-        MyCalendarView(LocalDate.now()) { selectedDate = it }
+        MyCalendarView(selectedDate) { selectedDate = it }
         MyNotesAndButtonsRow()
         LazyColumn() {
             items(5) { NoteCard() }
