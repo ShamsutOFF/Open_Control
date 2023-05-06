@@ -1,4 +1,4 @@
-package com.example.opencontrol
+package com.example.opencontrol.noteTab
 
 import android.os.Build
 import androidx.annotation.RequiresApi

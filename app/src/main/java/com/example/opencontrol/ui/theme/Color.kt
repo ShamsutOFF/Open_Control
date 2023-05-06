@@ -9,6 +9,12 @@ val Pink80 = Color(0xFFEFB8C8)
 val PrimaryLidht = Color(0xFF6650a4)
 val ScondaryLight = Color(0xFF625b71)
 val TertiaryLight = Color(0xFF7D5260)
+
+
+
+val SelectedTab = Color(0xFFE35036)
+val UnSelectedTab = Color(0xFFD6D9DF)
+val GreyDivider = Color(0xFFC2C2C2)
 val Invisible = Color(0x0)
 
 

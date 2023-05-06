@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.opencontrol.noteTab.MyCalendarView
+import com.example.opencontrol.noteTab.NoteInfo
 import timber.log.Timber
 import java.time.LocalDate
 
@@ -74,7 +76,7 @@ private fun MyNotesAndButtonsRow() {
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NoteCard() {
     Card(
-        onClick = { Timber.d("@@@ Click to Card!") },
+        onClick = { NoteInfo()},
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)

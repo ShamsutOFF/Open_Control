@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.opencontrol.ui.theme.SelectedTab
+import com.example.opencontrol.ui.theme.UnSelectedTab
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -42,9 +44,11 @@ fun MainScreen() {
                             Icon(
                                 ImageVector.vectorResource(screen.icon),
                                 contentDescription = null,
-                                tint = Color.Red
+//                                tint = Color.Red
                             )
                         },
+                        selectedContentColor = SelectedTab,
+                        unselectedContentColor = UnSelectedTab,
                         selected = currentRoute == screen.route,
                         onClick = {
                             tabNavController.navigate(screen.route) {
