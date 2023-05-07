@@ -3,10 +3,9 @@ package com.example.opencontrol
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
+import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.model.Note
-import java.time.LocalDate
 import java.util.Random
-import java.util.UUID
 
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
 

@@ -63,6 +63,7 @@ dependencies {
     val retrofitVersion = "2.9.0"
     implementation ("io.insert-koin:koin-android:$koinVersion")
     implementation ("io.insert-koin:koin-androidx-compose:$koinVersion")
+//    implementation ("org.koin:koin-androidx-viewmodel:2.2.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
     implementation ("com.squareup.retrofit2:retrofit:$retrofitVersion")

@@ -1,4 +1,4 @@
-package com.example.opencontrol
+package com.example.opencontrol.domain
 
 import com.example.opencontrol.model.Note
 

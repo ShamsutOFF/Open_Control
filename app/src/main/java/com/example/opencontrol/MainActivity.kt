@@ -14,8 +14,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.opencontrol.noteTab.NoteInfo
 import com.example.opencontrol.ui.theme.OpenControlTheme
+import com.example.opencontrol.view.LoginScreen
+import com.example.opencontrol.view.MainScreen
+import com.example.opencontrol.view.noteTab.NoteInfo
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)

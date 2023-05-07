@@ -1,4 +1,4 @@
-package com.example.opencontrol
+package com.example.opencontrol.view
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -19,10 +19,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.SelectedTab
 import com.example.opencontrol.ui.theme.UnSelectedTab
+import com.example.opencontrol.view.noteTab.NoteTab
+import org.koin.androidx.compose.getViewModel
+import timber.log.Timber
 
-
+//private val mainViewModel: MainViewModel by viewModel()
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +36,6 @@ fun MainScreen(screenNavController: NavHostController) {
     Scaffold(
         bottomBar = {
             BottomNavigation(backgroundColor = Color.White) {
-//                val navBackStackEntry by screenNavController.currentBackStackEntryAsState()
                 val navBackStackEntry by tabNavController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
                 val tabs = listOf(
@@ -52,9 +56,7 @@ fun MainScreen(screenNavController: NavHostController) {
                         unselectedContentColor = UnSelectedTab,
                         selected = currentRoute == screen.route,
                         onClick = {
-//                            screenNavController.navigate(screen.route) {
                             tabNavController.navigate(screen.route) {
-//                                screenNavController.graph.startDestinationRoute?.let { route ->
                                 tabNavController.graph.startDestinationRoute?.let { route ->
                                     popUpTo(route) {
                                         saveState = true
@@ -70,7 +72,6 @@ fun MainScreen(screenNavController: NavHostController) {
         }
     ) { innerPadding ->
         NavHost(
-//            screenNavController,
             tabNavController,
             startDestination = Tab.HomeTab.route,
             Modifier.padding(innerPadding)

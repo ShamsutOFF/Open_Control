@@ -1,4 +1,4 @@
-package com.example.opencontrol.noteTab
+package com.example.opencontrol.view.noteTab
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -22,10 +22,8 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
@@ -33,8 +31,9 @@ import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import com.example.opencontrol.ui.theme.md_theme_light_secondary
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.inject
+import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -42,8 +41,6 @@ import timber.log.Timber
 fun NoteInfo(noteId: String) {
     Timber.d("@@@ NoteInfo noteId = $noteId")
     val viewModel = getViewModel<MainViewModel>()
-//    val viewModel: MainViewModel = viewModel()
-    Timber.d("@@@ NoteInfo viewModelId = ${viewModel.viewModelId}")
     val note = viewModel.getNoteById(noteId)
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -187,7 +184,8 @@ private fun CancelButton() {
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = {
+            Timber.d("@@@ Make cancel call to API (Maybe after Alert Dialog)") }) {
             Text(
                 text = "Отменить запись",
                 modifier = Modifier

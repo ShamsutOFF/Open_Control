@@ -1,4 +1,4 @@
-package com.example.opencontrol
+package com.example.opencontrol.view.noteTab
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -25,9 +25,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.opencontrol.MainActivity
+import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
-import com.example.opencontrol.noteTab.MyCalendarView
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.LocalDate
 
@@ -36,14 +38,9 @@ import java.time.LocalDate
 fun NoteTab(screenNavController: NavHostController) {
     var selectedDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
     val viewModel = getViewModel<MainViewModel>()
-//    val viewModel: MainViewModel = viewModel()
     Timber.d("@@@ NoteTab viewModelId = ${viewModel.viewModelId}")
+
     Column() {
-//        val screenNavController = rememberNavController()
-//        NavHost(screenNavController, startDestination = Tab.NoteTab.route) {
-//            composable(Tab.NoteTab.route) { NoteTab() }
-//            composable(MainActivity.Screen.NoteInfo.route) { NoteInfo() }
-//        }
         MyCalendarView(selectedDate) { selectedDate = it }
         MyNotesAndButtonsRow()
         LazyColumn() {

@@ -1,4 +1,4 @@
-package com.example.opencontrol.noteTab
+package com.example.opencontrol.view.noteTab
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.LightColors
+import timber.log.Timber
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -56,7 +57,7 @@ fun MyCalendarView(
     val currentMonth = YearMonth.now().plusMonths(monthOffset.toLong())
     val monthTitle = currentMonth.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale("ru"))
     val yearTitle = currentMonth.year.toString()
-
+    Timber.d("@@@ MyCalendarView selectedDate = $selectedDate")
     Column(
         modifier = Modifier
             .fillMaxWidth()
