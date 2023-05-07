@@ -1,5 +1,7 @@
 package com.example.opencontrol.noteTab
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,15 +25,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
+import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import com.example.opencontrol.ui.theme.md_theme_light_secondary
+import org.koin.androidx.compose.getViewModel
+import timber.log.Timber
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoteInfo(note: Note) {
+fun NoteInfo(noteId: String) {
+    Timber.d("@@@ NoteInfo noteId = $noteId")
+    val viewModel = getViewModel<MainViewModel>()
+//    val viewModel: MainViewModel = viewModel()
+    Timber.d("@@@ NoteInfo viewModelId = ${viewModel.viewModelId}")
+    val note = viewModel.getNoteById(noteId)
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -61,7 +74,7 @@ private fun ChatAndVideoBlock() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 20.dp)
-            .background(color = md_theme_light_secondary, shape = RoundedCornerShape(16.dp))
+            .background(color = md_theme_light_inversePrimary, shape = RoundedCornerShape(16.dp))
 
     ) {
         Row(

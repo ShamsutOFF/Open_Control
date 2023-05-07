@@ -58,6 +58,18 @@ dependencies {
 
     implementation ("com.jakewharton.timber:timber:5.0.1")
 
+    //Koin
+    val koinVersion = "3.4.0"
+    val retrofitVersion = "2.9.0"
+    implementation ("io.insert-koin:koin-android:$koinVersion")
+    implementation ("io.insert-koin:koin-androidx-compose:$koinVersion")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    implementation ("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation ("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+    implementation ("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+//    implementation("androidx.compose.runtime:runtime-livedata:1.4.3")
+
     implementation(platform("androidx.compose:compose-bom:2022.10.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")

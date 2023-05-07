@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,44 +23,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.noteTab.MyCalendarView
-import com.example.opencontrol.noteTab.NoteInfo
+import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.LocalDate
-import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun NoteTab() {
+fun NoteTab(screenNavController: NavHostController) {
     var selectedDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
-    val testingNote = Note(
-        UUID.randomUUID().toString(),
-        "проверка пожарной безопасности",
-        "8:30-9:00",
-        LocalDate.now(),
-        "Васильев Александр Ильич",
-        "выездная проверка",
-        "123456789",
-        "Подготовить паспорт объекта"
-    )
+    val viewModel = getViewModel<MainViewModel>()
+//    val viewModel: MainViewModel = viewModel()
+    Timber.d("@@@ NoteTab viewModelId = ${viewModel.viewModelId}")
     Column() {
-        val screenNavController = rememberNavController()
-        NavHost(screenNavController, startDestination = Tab.NoteTab.route) {
-            composable(Tab.NoteTab.route) { NoteTab() }
-            composable(MainActivity.Screen.NoteInfo.route) { NoteInfo() }
-        }
+//        val screenNavController = rememberNavController()
+//        NavHost(screenNavController, startDestination = Tab.NoteTab.route) {
+//            composable(Tab.NoteTab.route) { NoteTab() }
+//            composable(MainActivity.Screen.NoteInfo.route) { NoteInfo() }
+//        }
         MyCalendarView(selectedDate) { selectedDate = it }
         MyNotesAndButtonsRow()
         LazyColumn() {
-            items(5) {
-                NoteCard(
-                    testingNote
-                )
+            items(viewModel.getAllNotes()){ note ->
+                NoteCard(note = note,screenNavController = screenNavController)
             }
         }
     }
@@ -100,9 +89,9 @@ private fun MyNotesAndButtonsRow() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun NoteCard(note: Note) {
+private fun NoteCard(note: Note, screenNavController: NavHostController) {
     Card(
-        onClick = { },
+        onClick = { screenNavController.navigate(MainActivity.Screen.NoteInfo.withArgs(note.id)) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)

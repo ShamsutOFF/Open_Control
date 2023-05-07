@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,11 +26,12 @@ import com.example.opencontrol.ui.theme.UnSelectedTab
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(screenNavController: NavHostController) {
     val tabNavController = rememberNavController()
     Scaffold(
         bottomBar = {
             BottomNavigation(backgroundColor = Color.White) {
+//                val navBackStackEntry by screenNavController.currentBackStackEntryAsState()
                 val navBackStackEntry by tabNavController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
                 val tabs = listOf(
@@ -44,14 +46,15 @@ fun MainScreen() {
                             Icon(
                                 ImageVector.vectorResource(screen.icon),
                                 contentDescription = null,
-//                                tint = Color.Red
                             )
                         },
                         selectedContentColor = SelectedTab,
                         unselectedContentColor = UnSelectedTab,
                         selected = currentRoute == screen.route,
                         onClick = {
+//                            screenNavController.navigate(screen.route) {
                             tabNavController.navigate(screen.route) {
+//                                screenNavController.graph.startDestinationRoute?.let { route ->
                                 tabNavController.graph.startDestinationRoute?.let { route ->
                                     popUpTo(route) {
                                         saveState = true
@@ -67,12 +70,13 @@ fun MainScreen() {
         }
     ) { innerPadding ->
         NavHost(
+//            screenNavController,
             tabNavController,
             startDestination = Tab.HomeTab.route,
             Modifier.padding(innerPadding)
         ) {
             composable(Tab.HomeTab.route) { HomeTab() }
-            composable(Tab.NoteTab.route) { NoteTab() }
+            composable(Tab.NoteTab.route) { NoteTab(screenNavController) }
             composable(Tab.ChatTab.route) { ChatTab() }
             composable(Tab.UserTab.route) { UserTab() }
         }
