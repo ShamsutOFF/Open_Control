@@ -24,21 +24,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.R
+import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import com.example.opencontrol.ui.theme.md_theme_light_secondary
 
-@Preview
 @Composable
-fun NoteInfo() {
+fun NoteInfo(note: Note) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeaderBlock()
         ChatAndVideoBlock()
-        NoteInfoBlock()
+        NoteInfoBlock(note)
         CancelButton()
     }
 }
@@ -110,25 +110,25 @@ private fun ChatAndVideoBlock() {
 }
 
 @Composable
-private fun NoteInfoBlock() {
+private fun NoteInfoBlock(note: Note) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        FieldInfoRow("Тип:", "Консультация")
+        FieldInfoRow("Тип:", note.type)
         InfoBlockDivider()
-        FieldInfoRow("Дата:", "Консультация")
+        FieldInfoRow("Дата:", note.date.toString())
         InfoBlockDivider()
-        FieldInfoRow("Время:", "Консультация")
+        FieldInfoRow("Время:", note.time)
         InfoBlockDivider()
-        FieldInfoRow("Формат:", "Консультация")
+        FieldInfoRow("Формат:", note.format)
         InfoBlockDivider()
-        FieldInfoRow("Номер объекта:", "Консультация")
+        FieldInfoRow("Номер объекта:", note.objectNumber)
         InfoBlockDivider()
-        FieldInfoRow("Инспектор:", "Консультация")
+        FieldInfoRow("Инспектор:", note.inspectorFIO)
         InfoBlockDivider()
-        FieldInfoRow("Дополнительно:", "Консультация")
+        FieldInfoRow("Дополнительно:", note.info)
     }
 }
 

@@ -22,20 +22,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.opencontrol.model.Note
 import com.example.opencontrol.noteTab.MyCalendarView
 import com.example.opencontrol.noteTab.NoteInfo
 import timber.log.Timber
 import java.time.LocalDate
+import java.util.UUID
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoteTab() {
     var selectedDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
+    val testingNote = Note(
+        UUID.randomUUID().toString(),
+        "проверка пожарной безопасности",
+        "8:30-9:00",
+        LocalDate.now(),
+        "Васильев Александр Ильич",
+        "выездная проверка",
+        "123456789",
+        "Подготовить паспорт объекта"
+    )
     Column() {
+        val screenNavController = rememberNavController()
+        NavHost(screenNavController, startDestination = Tab.NoteTab.route) {
+            composable(Tab.NoteTab.route) { NoteTab() }
+            composable(MainActivity.Screen.NoteInfo.route) { NoteInfo() }
+        }
         MyCalendarView(selectedDate) { selectedDate = it }
         MyNotesAndButtonsRow()
         LazyColumn() {
-            items(5) { NoteCard() }
+            items(5) {
+                NoteCard(
+                    testingNote
+                )
+            }
         }
     }
     Timber.d("@@@ Selected date = $selectedDate")
@@ -72,17 +97,18 @@ private fun MyNotesAndButtonsRow() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun NoteCard() {
+private fun NoteCard(note: Note) {
     Card(
-        onClick = { NoteInfo()},
+        onClick = { },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         Text(
-            text = "проверка пожарной безопасности",
+            text = note.type,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -90,7 +116,7 @@ private fun NoteCard() {
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = "Инспектор: Васильев Александ Ильич",
+            text = "Инспектор: ${note.inspectorFIO}",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -101,14 +127,15 @@ private fun NoteCard() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "8:30-9:00",
+                text = note.time,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )
             Text(
-                text = "14 августа 2023",
+                text = "${note.date.dayOfMonth}.${note.date.monthValue}.${note.date.year}",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )
