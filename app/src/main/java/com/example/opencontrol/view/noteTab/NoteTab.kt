@@ -9,47 +9,56 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.opencontrol.MainActivity
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
 import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
-import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NoteTab(screenNavController: NavHostController) {
-    var selectedDate by remember { mutableStateOf<LocalDate>(LocalDate.now()) }
-    val viewModel = getViewModel<MainViewModel>()
-    Timber.d("@@@ NoteTab viewModelId = ${viewModel.viewModelId}")
 
+    val viewModel = getViewModel<MainViewModel>()
+    val markedDateList = viewModel.getAllNotes().map { note ->
+        note.date
+    }
+    val listState = rememberLazyListState()
+
+    val notes = viewModel.getAllNotes().sortedBy { it.date }
+    val selectedIndex = notes.indexOfFirst { it.date >= viewModel.selectedDate }
+    val scrollPosition = if (selectedIndex != -1) selectedIndex else notes.lastIndex
+
+    LaunchedEffect(key1 = viewModel.selectedDate) {
+        listState.animateScrollToItem(index = scrollPosition)
+    }
     Column() {
-        MyCalendarView(selectedDate) { selectedDate = it }
+        MyCalendarView(
+            selectedDate = viewModel.selectedDate,
+            markedDateList = markedDateList,
+            onDateSelected = viewModel::changeSelectedDate
+        )
         MyNotesAndButtonsRow()
-        LazyColumn() {
-            items(viewModel.getAllNotes()){ note ->
-                NoteCard(note = note,screenNavController = screenNavController)
+        LazyColumn(state = listState) {
+            items(notes) { note ->
+                NoteCard(note = note, screenNavController = screenNavController)
             }
         }
     }
-    Timber.d("@@@ Selected date = $selectedDate")
 }
 
 @Composable
@@ -115,13 +124,14 @@ private fun NoteCard(note: Note, screenNavController: NavHostController) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            val formatter1 = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
             Text(
                 text = note.time,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )
             Text(
-                text = "${note.date.dayOfMonth}.${note.date.monthValue}.${note.date.year}",
+                text = note.date.format(formatter1),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )

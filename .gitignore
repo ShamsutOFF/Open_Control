@@ -19,3 +19,7 @@ local.properties
 /.idea/sonarlint/securityhotspotstore/index.pb
 /buildSrc/build/tmp/jar/MANIFEST.MF
 /.idea/*
+/buildSrc/build/kotlin/compileKotlin/local-state/build-history.bin
+/hs_err_pid3320.log
+/hs_err_pid11948.log
+/replay_pid3320.log

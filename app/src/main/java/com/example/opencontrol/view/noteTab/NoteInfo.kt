@@ -35,6 +35,7 @@ import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.inject
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
+import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -119,6 +120,7 @@ private fun ChatAndVideoBlock() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun NoteInfoBlock(note: Note) {
     Column(
@@ -126,9 +128,10 @@ private fun NoteInfoBlock(note: Note) {
             .fillMaxWidth()
             .padding(16.dp)
     ) {
+        val formatter2 = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         FieldInfoRow("Тип:", note.type)
         InfoBlockDivider()
-        FieldInfoRow("Дата:", note.date.toString())
+        FieldInfoRow("Дата:", note.date.format(formatter2))
         InfoBlockDivider()
         FieldInfoRow("Время:", note.time)
         InfoBlockDivider()

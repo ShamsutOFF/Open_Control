@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -51,20 +53,20 @@ import java.util.Locale
 @Composable
 fun MyCalendarView(
     selectedDate: LocalDate,
+    markedDateList: List<LocalDate>,
     onDateSelected: (LocalDate) -> Unit
 ) {
     var monthOffset by remember { mutableStateOf(0) }
     val currentMonth = YearMonth.now().plusMonths(monthOffset.toLong())
     val monthTitle = currentMonth.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale("ru"))
     val yearTitle = currentMonth.year.toString()
-    Timber.d("@@@ MyCalendarView selectedDate = $selectedDate")
     Column(
         modifier = Modifier
             .fillMaxWidth()
     ) {
         MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
         WeekdayHeader()
-        DaysGrid(currentMonth, selectedDate, onDateSelected)
+        DaysGrid(currentMonth, markedDateList, selectedDate, onDateSelected)
     }
 }
 
@@ -126,6 +128,7 @@ private fun WeekdayHeader() {
 @Composable
 private fun DaysGrid(
     currentMonth: YearMonth,
+    markedDateList: List<LocalDate>,
     selectedDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit
 ) {
@@ -145,9 +148,12 @@ private fun DaysGrid(
                 Spacer(modifier = Modifier.width(cellSize))
             } else {
                 val date = currentMonth.atDay(dayIndex - firstEmptyCells + 1)
+                val isSelected = date == selectedDate
+                val isMarked = markedDateList.contains(date)
                 DayView(
                     date = date,
-                    selectedDate = selectedDate,
+                    isMarked = isMarked,
+                    isSelected = isSelected,
                     onDateSelected = onDateSelected
                 )
             }
@@ -159,10 +165,10 @@ private fun DaysGrid(
 @Composable
 fun DayView(
     date: LocalDate,
-    selectedDate: LocalDate,
+    isMarked: Boolean,
+    isSelected: Boolean,
     onDateSelected: (LocalDate) -> Unit
 ) {
-    val isSelected = date == selectedDate
     val isToday = date == LocalDate.now()
 
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
@@ -176,7 +182,6 @@ fun DayView(
             .background(
                 when {
                     isSelected -> LightColors.primary
-//                    isToday -> LightColors.primary.copy(alpha = 0.4f)
                     else -> Color.Transparent
                 }
             )
@@ -204,6 +209,19 @@ fun DayView(
             textAlign = TextAlign.Center,
             modifier = Modifier.align(Alignment.Center)
         )
+        if (isMarked) {
+            Box(modifier = Modifier
+                .size(8.dp)
+                .align(Alignment.BottomCenter)){
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .clip(CircleShape)
+                        .background(color = if (!isSelected) LightColors.primary else LightColors.onPrimary)
+                        .align(Alignment.TopCenter)
+                )
+            }
+        }
     }
 }
 
