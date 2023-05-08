@@ -15,7 +15,7 @@ import java.util.Random
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
 
     val viewModelId = Random().nextInt(1000)
-    var selectedDate by mutableStateOf(LocalDate.now())
+    var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -26,6 +26,15 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
     @RequiresApi(Build.VERSION_CODES.O)
     fun getNoteById(id: String): Note {
         return repository.getNoteById(id)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addNewNote(note: Note): Boolean {
+        return repository.saveNote(note)
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun deleteNoteById(id: String): Boolean {
+        return repository.deleteNoteById(id)
     }
 
     fun changeSelectedDate(newDate: LocalDate){

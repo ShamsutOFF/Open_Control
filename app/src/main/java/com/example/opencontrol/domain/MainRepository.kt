@@ -6,4 +6,8 @@ interface MainRepository {
     fun getAllNotes(): List<Note>
 
     fun getNoteById(id: String): Note
+
+    fun saveNote(note: Note): Boolean
+
+    fun deleteNoteById(id: String): Boolean
 }

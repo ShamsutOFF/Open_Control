@@ -24,6 +24,16 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         return emptyNote
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun saveNote(note: Note): Boolean {
+        return notes.add(note)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun deleteNoteById(id: String): Boolean {
+        return notes.remove(getNoteById(id))
+    }
+
     private val firstNames =
         listOf("Александр", "Андрей", "Дмитрий", "Иван", "Максим", "Никита", "Сергей")
     private val lastNames =
@@ -94,16 +104,16 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private val notes = listOf(
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
-         generateRandomNote(),
+    private var notes = mutableListOf(
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
+        generateRandomNote(),
     )
 }

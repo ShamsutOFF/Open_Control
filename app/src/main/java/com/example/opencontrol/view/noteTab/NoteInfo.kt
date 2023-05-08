@@ -11,11 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -24,6 +28,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.Navigation.findNavController
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
@@ -32,8 +37,6 @@ import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import org.koin.androidx.compose.getViewModel
-import org.koin.androidx.compose.inject
-import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
@@ -50,13 +53,13 @@ fun NoteInfo(noteId: String) {
         HeaderBlock()
         ChatAndVideoBlock()
         NoteInfoBlock(note)
-        CancelButton()
+        CancelButton(viewModel::deleteNoteById, noteId)
     }
 }
 
 @Composable
 private fun HeaderBlock() {
-    Text(text = "Информация о записи", style = Typography.headlineLarge)
+    Text(text = "Информация о записи", style = Typography.headlineMedium)
     Divider(
         color = md_theme_light_primary,
         thickness = 3.dp,
@@ -146,7 +149,7 @@ private fun NoteInfoBlock(note: Note) {
 }
 
 @Composable
-private fun FieldInfoRow(parameter:String, value:String) {
+private fun FieldInfoRow(parameter: String, value: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = parameter,
@@ -179,7 +182,8 @@ private fun InfoBlockDivider() {
 }
 
 @Composable
-private fun CancelButton() {
+private fun CancelButton(deleteNote: (String) -> Boolean, noteId: String) {
+    val openDialog = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -188,7 +192,8 @@ private fun CancelButton() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(onClick = {
-            Timber.d("@@@ Make cancel call to API (Maybe after Alert Dialog)") }) {
+            openDialog.value = true
+        }) {
             Text(
                 text = "Отменить запись",
                 modifier = Modifier
@@ -197,6 +202,35 @@ private fun CancelButton() {
                 fontWeight = FontWeight.Bold
             )
         }
+        if (openDialog.value) {
+            DeleteNoteDialog(onConfirm = {
+                deleteNote(noteId)
+                openDialog.value = false
 
+            },
+                onDismiss = { openDialog.value = false })
+        }
     }
+}
+
+@Composable
+fun DeleteNoteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Отменить запись?") },
+        text = { Text("Вы действительно хотите отменить эту запись?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Да")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Нет")
+            }
+        }
+    )
 }
