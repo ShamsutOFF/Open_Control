@@ -1,7 +1,5 @@
 package com.example.opencontrol.view.noteTab
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,18 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import com.example.opencontrol.MainActivity
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.view.destinations.NoteInfoDestination
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-@RequiresApi(Build.VERSION_CODES.O)
+@Destination
 @Composable
-fun NoteTab(screenNavController: NavHostController) {
-
+fun NoteTab(navigator: DestinationsNavigator) {
     val viewModel = getViewModel<MainViewModel>()
     val markedDateList = viewModel.getAllNotes().map { note ->
         note.date
@@ -55,7 +53,7 @@ fun NoteTab(screenNavController: NavHostController) {
         MyNotesAndButtonsRow()
         LazyColumn(state = listState) {
             items(notes) { note ->
-                NoteCard(note = note, screenNavController = screenNavController)
+                NoteCard(note = note, navigator = navigator)
             }
         }
     }
@@ -92,12 +90,11 @@ private fun MyNotesAndButtonsRow() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun NoteCard(note: Note, screenNavController: NavHostController) {
+private fun NoteCard(note: Note, navigator: DestinationsNavigator) {
     Card(
-        onClick = { screenNavController.navigate(MainActivity.Screen.NoteInfo.withArgs(note.id)) },
+        onClick = { navigator.navigate(NoteInfoDestination(note.id)) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)

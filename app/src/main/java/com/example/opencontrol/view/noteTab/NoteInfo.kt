@@ -1,7 +1,5 @@
 package com.example.opencontrol.view.noteTab
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.Navigation.findNavController
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
@@ -36,13 +34,15 @@ import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
+@Destination
 @Composable
-fun NoteInfo(noteId: String) {
+fun NoteInfo(navigator: DestinationsNavigator, noteId: String) {
     Timber.d("@@@ NoteInfo noteId = $noteId")
     val viewModel = getViewModel<MainViewModel>()
     val note = viewModel.getNoteById(noteId)
@@ -51,9 +51,14 @@ fun NoteInfo(noteId: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeaderBlock()
-        ChatAndVideoBlock()
-        NoteInfoBlock(note)
-        CancelButton(viewModel::deleteNoteById, noteId)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item { ChatAndVideoBlock() }
+            item { NoteInfoBlock(note) }
+            item { CancelButton(viewModel::deleteNoteById, noteId, navigator) }
+        }
     }
 }
 
@@ -123,7 +128,6 @@ private fun ChatAndVideoBlock() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun NoteInfoBlock(note: Note) {
     Column(
@@ -182,7 +186,11 @@ private fun InfoBlockDivider() {
 }
 
 @Composable
-private fun CancelButton(deleteNote: (String) -> Boolean, noteId: String) {
+private fun CancelButton(
+    deleteNote: (String) -> Boolean,
+    noteId: String,
+    navigator: DestinationsNavigator
+) {
     val openDialog = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -206,7 +214,7 @@ private fun CancelButton(deleteNote: (String) -> Boolean, noteId: String) {
             DeleteNoteDialog(onConfirm = {
                 deleteNote(noteId)
                 openDialog.value = false
-
+                navigator.popBackStack()
             },
                 onDismiss = { openDialog.value = false })
         }

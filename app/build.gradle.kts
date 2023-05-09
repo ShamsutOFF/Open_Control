@@ -1,15 +1,35 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
+    id("com.google.devtools.ksp") version "1.7.20-1.0.7"
 }
 
+kotlin{
+    sourceSets{
+        debug{
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        }
+        release{
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+        }
+    }
+}
 android {
     namespace = "com.example.opencontrol"
     compileSdk = 33
 
+//    applicationVariants.all {
+//        kotlin.sourceSets {
+//            getByName(name) {
+//                kotlin.srcDir("build/generated/ksp/$name/kotlin")
+//            }
+//        }
+//    }
+
     defaultConfig {
         applicationId = "com.example.opencontrol"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -61,10 +81,18 @@ dependencies {
     //Koin
     val koinVersion = "3.4.0"
     val retrofitVersion = "2.9.0"
+    val composeDestinationsVersion = "1.9.42-beta"
     implementation ("io.insert-koin:koin-android:$koinVersion")
     implementation ("io.insert-koin:koin-androidx-compose:$koinVersion")
 //    implementation ("org.koin:koin-androidx-viewmodel:2.2.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    //Compose Destinations
+    implementation("io.github.raamcosta.compose-destinations:core:$composeDestinationsVersion")
+    ksp("io.github.raamcosta.compose-destinations:ksp:$composeDestinationsVersion")
+    //For Animated
+//    implementation("io.github.raamcosta.compose-destinations:animations-core:$composeDestinationsVersion")
+//    ksp("io.github.raamcosta.compose-destinations:animations-core:$composeDestinationsVersion")
 
     implementation ("com.squareup.retrofit2:retrofit:$retrofitVersion")
     implementation ("com.squareup.retrofit2:converter-gson:$retrofitVersion")
