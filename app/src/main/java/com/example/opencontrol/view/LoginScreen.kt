@@ -11,8 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.opencontrol.view.destinations.MainScreenDestination
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+@RootNavGraph(start = true)
 @Destination(start = true)
 @Composable
 fun LoginScreen(navigator: DestinationsNavigator) {

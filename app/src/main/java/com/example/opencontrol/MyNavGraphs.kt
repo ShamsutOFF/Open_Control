@@ -5,6 +5,7 @@ import com.example.opencontrol.view.destinations.ChatTabDestination
 import com.example.opencontrol.view.destinations.HomeTabDestination
 import com.example.opencontrol.view.destinations.LoginScreenDestination
 import com.example.opencontrol.view.destinations.MainScreenDestination
+import com.example.opencontrol.view.destinations.NewNoteDestination
 import com.example.opencontrol.view.destinations.NoteInfoDestination
 import com.example.opencontrol.view.destinations.NoteTabDestination
 import com.example.opencontrol.view.destinations.UserTabDestination
@@ -26,7 +27,8 @@ object MyNavGraphs {
             HomeTabDestination,
             UserTabDestination,
             NoteTabDestination,
-            NoteInfoDestination
+            NoteInfoDestination,
+            NewNoteDestination
         )
     )
 }

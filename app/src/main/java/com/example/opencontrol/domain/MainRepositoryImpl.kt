@@ -9,12 +9,10 @@ import kotlin.random.Random
 
 class MainRepositoryImpl(private val api: MyApi) : MainRepository {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun getAllNotes(): List<Note> {
         return notes
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun getNoteById(id: String): Note {
         notes.forEach {
             if (it.id == id) {
@@ -24,12 +22,10 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         return emptyNote
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun saveNote(note: Note): Boolean {
         return notes.add(note)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun deleteNoteById(id: String): Boolean {
         return notes.remove(getNoteById(id))
     }
@@ -55,7 +51,6 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         return "$lastName $firstName $patronymic"
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun generateRandomDateWithinCurrentMonth(): LocalDate {
         val currentMonth = LocalDate.now().month
         val year = LocalDate.now().year
@@ -76,7 +71,6 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         return "$startTimeString-$endTimeString"
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private val emptyNote =
         Note(
             "",
@@ -89,7 +83,6 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
             "empty"
         )
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun generateRandomNote(): Note {
         return Note(
             UUID.randomUUID().toString(),
@@ -103,7 +96,6 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private var notes = mutableListOf(
         generateRandomNote(),
         generateRandomNote(),

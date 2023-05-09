@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.view.destinations.NewNoteDestination
 import com.example.opencontrol.view.destinations.NoteInfoDestination
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -50,7 +51,7 @@ fun NoteTab(navigator: DestinationsNavigator) {
             markedDateList = markedDateList,
             onDateSelected = viewModel::changeSelectedDate
         )
-        MyNotesAndButtonsRow()
+        MyNotesAndButtonsRow(navigator)
         LazyColumn(state = listState) {
             items(notes) { note ->
                 NoteCard(note = note, navigator = navigator)
@@ -60,7 +61,7 @@ fun NoteTab(navigator: DestinationsNavigator) {
 }
 
 @Composable
-private fun MyNotesAndButtonsRow() {
+private fun MyNotesAndButtonsRow(navigator: DestinationsNavigator) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,7 +74,7 @@ private fun MyNotesAndButtonsRow() {
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal
         )
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { navigator.navigate(NewNoteDestination) }) {
             Text(
                 text = "новая запись",
                 fontSize = 14.sp,
