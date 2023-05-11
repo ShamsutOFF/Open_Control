@@ -10,4 +10,11 @@ interface MainRepository {
     fun saveNote(note: Note): Boolean
 
     fun deleteNoteById(id: String): Boolean
+
+    fun getDepartments(): List<String>
+
+    fun getControlAgencies(): List<String>
+
+    fun getControlTypes(): List<String>
+
 }

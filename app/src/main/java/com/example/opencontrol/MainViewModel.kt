@@ -22,6 +22,18 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
         return repository.getNoteById(id)
     }
 
+    fun getControlAgencies(): List<String> {
+        return repository.getControlAgencies()
+    }
+
+    fun getDepartments(): List<String> {
+        return repository.getDepartments()
+    }
+
+    fun getControlTypes(): List<String> {
+        return repository.getControlTypes()
+    }
+
     fun addNewNote(note: Note): Boolean {
         return repository.saveNote(note)
     }

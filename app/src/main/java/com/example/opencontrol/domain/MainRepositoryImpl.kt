@@ -1,7 +1,5 @@
 package com.example.opencontrol.domain
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.opencontrol.model.Note
 import java.time.LocalDate
 import java.util.UUID
@@ -28,6 +26,18 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
 
     override fun deleteNoteById(id: String): Boolean {
         return notes.remove(getNoteById(id))
+    }
+
+    override fun getDepartments(): List<String> {
+        return listOf("Подразделение 1","Подразделение 2","Подразделение 3")
+    }
+
+    override fun getControlAgencies(): List<String> {
+        return listOf("Орган контроля 1","Орган контроля 2","Орган контроля 3","Орган контроля 4")
+    }
+
+    override fun getControlTypes(): List<String> {
+        return listOf("Тип контроля 1","Тип контроля 2","Тип контроля 3","Тип контроля 4","Тип контроля 5")
     }
 
     private val firstNames =
@@ -64,7 +74,8 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         val durationMinutes = 30
         val startTime = startHour * 60
         val endTime = endHour * 60 - durationMinutes
-        val startMinute = Random.nextInt(startTime, endTime)
+//        val startMinute = Random.nextInt(startTime, endTime)
+        val startMinute = (startTime..endTime step durationMinutes).toList().random()
         val endMinute = startMinute + durationMinutes
         val startTimeString = "${startMinute / 60}.${String.format("%02d", startMinute % 60)}"
         val endTimeString = "${endMinute / 60}.${String.format("%02d", endMinute % 60)}"
