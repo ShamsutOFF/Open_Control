@@ -5,13 +5,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,8 +30,6 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconToggleButton
-import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
@@ -59,10 +57,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
+import com.example.opencontrol.ui.theme.LightGreyBorder
 import com.example.opencontrol.ui.theme.Typography
-import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateBackground
-import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateText
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -92,52 +90,6 @@ fun NewNote(navigator: DestinationsNavigator) {
         }
     }
 }
-
-@Composable
-private fun FreeTimeForRecording(freeTimeForRecording: List<String>) {
-    var selectedTime by remember {
-        mutableStateOf("")
-    }
-    LazyRow() {
-        items(freeTimeForRecording) { time ->
-            SelectableTimeCell(time, time == selectedTime) { selectedTime = time }
-        }
-    }
-}
-
-
-@Composable
-private fun SelectableTimeCell(
-    time: String,
-    isSelected: Boolean,
-    onTimeSelected: (String) -> Unit
-) {
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    val cellWidth = (screenWidthDp - 60.dp) / 3
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(RoundedCornerShape(50))
-            .width(cellWidth)
-            .background(
-                when {
-                    isSelected -> LightColors.primary
-                    else -> LightColors.primaryContainer
-                }
-            )
-            .clickable { onTimeSelected(time) }
-            .aspectRatio(3f)
-    ) {
-        Text(
-            text = time,
-            fontWeight = FontWeight.Bold,
-            fontSize = 10.sp,
-            color = if (isSelected) LightColors.onPrimary else Color.Unspecified
-        )
-    }
-}
-
 
 @Composable
 private fun HeaderBlock() {
@@ -193,8 +145,11 @@ private fun SelectableItem(title: String, values: List<String>) {
 
 @Composable
 private fun ToggleItem(title: String) {
-    var checkedfirst by remember { mutableStateOf(false) }
-    var checkedSecond by remember { mutableStateOf(false) }
+    var selectedItem by remember {
+        mutableStateOf("")
+    }
+    val firstButtonText = "ВИДЕО-КОНФЕРЕНЦИЯ"
+    val secondButtonText = "ЛИЧНЫЙ ВИЗИТ"
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -202,33 +157,51 @@ private fun ToggleItem(title: String) {
     ) {
         Text(text = title, fontSize = 14.sp)
         Row(modifier = Modifier.fillMaxWidth()) {
-            FilledIconToggleButton(
-//            FilledTonalIconToggleButton(
-                checked = checkedfirst, onCheckedChange = {
-                    if (!checkedfirst) {
-                        checkedfirst = true
-                        checkedSecond = false
-                    }
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f), shape = RoundedCornerShape(40)
-            ) {
-                Text(text = "ВИДЕО-КОНФЕРЕНЦИЯ", fontSize = 14.sp)
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            FilledIconToggleButton(
-                checked = checkedSecond, onCheckedChange = {
-                    if (!checkedSecond) {
-                        checkedSecond = true
-                        checkedfirst = false
-                    }
-                }, modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f), shape = RoundedCornerShape(40)
-            ) {
-                Text(text = "ЛИЧНЫЙ ВИЗИТ", fontSize = 14.sp)
-            }
+            ToggleButton(firstButtonText, selectedItem == firstButtonText) { selectedItem = it }
+            ToggleButton(secondButtonText, selectedItem == secondButtonText) { selectedItem = it }
         }
+    }
+}
+
+
+@Composable
+private fun ToggleButton(
+    text: String,
+    isSelected: Boolean,
+    onTextSelected: (String) -> Unit
+) {
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    val cellWidth = (screenWidthDp - 16.dp) / 2
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(4.dp)
+            .clip(RoundedCornerShape(40))
+            .width(cellWidth)
+            .height(40.dp)
+            .background(
+                when {
+                    isSelected -> LightColors.primary
+                    else -> Color.Transparent
+                }
+            )
+            .border(
+                width = when {
+                    isSelected -> 0.dp
+                    else -> 1.dp
+                }, color = when {
+                    isSelected -> Color.Transparent
+                    else -> LightGreyBorder
+                }, shape = RoundedCornerShape(40)
+            )
+            .clickable { onTextSelected(text) }
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            color = if (isSelected) LightColors.onPrimary else GreyText
+        )
     }
 }
 
@@ -310,6 +283,49 @@ private fun AddPhotoItem() {
     }
 }
 
+@Composable
+private fun FreeTimeForRecording(freeTimeForRecording: List<String>) {
+    var selectedTime by remember {
+        mutableStateOf("")
+    }
+    LazyRow() {
+        items(freeTimeForRecording) { time ->
+            SelectableTimeCell(time, time == selectedTime) { selectedTime = time }
+        }
+    }
+}
+
+@Composable
+private fun SelectableTimeCell(
+    time: String,
+    isSelected: Boolean,
+    onTimeSelected: (String) -> Unit
+) {
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    val cellWidth = (screenWidthDp - 60.dp) / 3
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(4.dp)
+            .clip(RoundedCornerShape(50))
+            .width(cellWidth)
+            .background(
+                when {
+                    isSelected -> LightColors.primary
+                    else -> LightColors.primaryContainer
+                }
+            )
+            .clickable { onTimeSelected(time) }
+            .aspectRatio(3f)
+    ) {
+        Text(
+            text = time,
+            fontWeight = FontWeight.Bold,
+            fontSize = 10.sp,
+            color = if (isSelected) LightColors.onPrimary else Color.Unspecified
+        )
+    }
+}
 
 @Composable
 private fun NoteButton(
