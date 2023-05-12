@@ -87,7 +87,7 @@ fun NewNote(navigator: DestinationsNavigator) {
             item { ExtraInfoItem("Дополнительная информация") }
             item { AddPhotoItem() }
             item { WeeklyCalendar(viewModel.selectedDate, { }) }
-            item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5)) }
+            item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
             item { NoteButton(navigator) }
         }
     }
@@ -211,7 +211,7 @@ private fun ToggleItem(title: String) {
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f), shape = RoundedCornerShape(40)
             ) {
                 Text(text = "ВИДЕО-КОНФЕРЕНЦИЯ", fontSize = 14.sp)
             }
@@ -224,7 +224,7 @@ private fun ToggleItem(title: String) {
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .weight(1f), shape = RoundedCornerShape(40)
             ) {
                 Text(text = "ЛИЧНЫЙ ВИЗИТ", fontSize = 14.sp)
             }
@@ -322,9 +322,11 @@ private fun NoteButton(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {
-            Timber.d("@@@ Implement it!!!")
-        }) {
+        Button(
+            onClick = {
+                Timber.d("@@@ Implement it!!!")
+            }, shape = RoundedCornerShape(40)
+        ) {
             Text(
                 text = "Записаться",
                 modifier = Modifier

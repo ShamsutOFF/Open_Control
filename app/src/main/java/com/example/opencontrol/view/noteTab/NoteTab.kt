@@ -1,5 +1,6 @@
 package com.example.opencontrol.view.noteTab
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItemDefaults.contentColor
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.ui.theme.GreyBackground
+import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.view.destinations.NewNoteDestination
 import com.example.opencontrol.view.destinations.NoteInfoDestination
 import com.ramcosta.composedestinations.annotation.Destination
@@ -45,8 +53,8 @@ fun NoteTab(navigator: DestinationsNavigator) {
     LaunchedEffect(key1 = viewModel.selectedDate) {
         listState.animateScrollToItem(index = scrollPosition)
     }
-    Column() {
-        MyCalendarView(
+    Column(modifier = Modifier.background(GreyBackground)) {
+        MonthlyCalendar(
             selectedDate = viewModel.selectedDate,
             markedDateList = markedDateList,
             onDateSelected = viewModel::changeSelectedDate
@@ -98,7 +106,11 @@ private fun NoteCard(note: Note, navigator: DestinationsNavigator) {
         onClick = { navigator.navigate(NoteInfoDestination(note.id)) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = LightColors.onPrimary,
+        )
+
     ) {
         Text(
             text = note.type,

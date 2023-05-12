@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +25,7 @@ fun LoginScreen(navigator: DestinationsNavigator) {
     ) {
         Column(verticalArrangement = Arrangement.Center) {
             Text(text = "LoginScreen")
-            Button(onClick = { navigator.navigate(MainScreenDestination) }) {
+            Button(onClick = { navigator.navigate(MainScreenDestination) }, shape = RoundedCornerShape(40)) {
                 Text(text = "Войти")
             }
         }

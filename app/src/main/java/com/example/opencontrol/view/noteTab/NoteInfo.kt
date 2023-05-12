@@ -217,9 +217,11 @@ private fun CancelButton(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Button(onClick = {
-            openDialog.value = true
-        }) {
+        Button(
+            onClick = {
+                openDialog.value = true
+            }, shape = RoundedCornerShape(40)
+        ) {
             Text(
                 text = "Отменить запись",
                 modifier = Modifier
