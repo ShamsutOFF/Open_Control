@@ -17,4 +17,6 @@ interface MainRepository {
 
     fun getControlTypes(): List<String>
 
+    fun getFreeTimeForRecording(count: Int): List<String>
+
 }

@@ -240,7 +240,7 @@ private fun CancelButton(
 }
 
 @Composable
-fun DeleteNoteDialog(
+private fun DeleteNoteDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {

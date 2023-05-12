@@ -34,6 +34,10 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
         return repository.getControlTypes()
     }
 
+    fun getFreeTimeForRecording(count: Int): List<String> {
+        return repository.getFreeTimeForRecording(count)
+    }
+
     fun addNewNote(note: Note): Boolean {
         return repository.saveNote(note)
     }
