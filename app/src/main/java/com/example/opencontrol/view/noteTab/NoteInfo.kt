@@ -33,6 +33,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
@@ -40,15 +43,19 @@ import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
-@Destination
+data class NoteInfoScreen(val noteId: String) : Screen {
+    @Composable
+    override fun Content() {
+        NoteInfoContent(noteId = noteId)
+    }
+}
+
 @Composable
-fun NoteInfo(navigator: DestinationsNavigator, noteId: String) {
+private fun NoteInfoContent(noteId: String) {
     Timber.d("@@@ NoteInfo noteId = $noteId")
     val viewModel = getViewModel<MainViewModel>()
     val note = viewModel.getNoteById(noteId)
@@ -63,7 +70,7 @@ fun NoteInfo(navigator: DestinationsNavigator, noteId: String) {
         ) {
             item { ChatAndVideoBlock() }
             item { NoteInfoBlock(note) }
-            item { CancelButton(viewModel::deleteNoteById, noteId, navigator) }
+            item { CancelButton(viewModel::deleteNoteById, noteId) }
         }
     }
 }
@@ -206,9 +213,9 @@ private fun InfoBlockDivider() {
 @Composable
 private fun CancelButton(
     deleteNote: (String) -> Boolean,
-    noteId: String,
-    navigator: DestinationsNavigator
+    noteId: String
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     val openDialog = remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
@@ -234,7 +241,7 @@ private fun CancelButton(
             DeleteNoteDialog(onConfirm = {
                 deleteNote(noteId)
                 openDialog.value = false
-                navigator.popBackStack()
+                navigator.pop()
             },
                 onDismiss = { openDialog.value = false })
         }

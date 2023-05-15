@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.screen.Screen
 import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.ui.theme.GreyText
@@ -62,14 +63,18 @@ import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.LightGreyBorder
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-@Destination
+class NewNoteScreen : Screen {
+    @Composable
+    override fun Content() {
+        NewNoteContent()
+    }
+}
+
 @Composable
-fun NewNote(navigator: DestinationsNavigator) {
+fun NewNoteContent() {
     val viewModel = getViewModel<MainViewModel>()
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
@@ -86,7 +91,7 @@ fun NewNote(navigator: DestinationsNavigator) {
             item { AddPhotoItem() }
             item { WeeklyCalendar(viewModel.selectedDate, { }) }
             item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
-            item { NoteButton(navigator) }
+            item { NoteButton() }
         }
     }
 }
@@ -328,9 +333,7 @@ private fun SelectableTimeCell(
 }
 
 @Composable
-private fun NoteButton(
-    navigator: DestinationsNavigator
-) {
+private fun NoteButton() {
     Column(
         modifier = Modifier
             .fillMaxSize()

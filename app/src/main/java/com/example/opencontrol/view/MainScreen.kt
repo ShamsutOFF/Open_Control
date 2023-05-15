@@ -1,6 +1,8 @@
 package com.example.opencontrol.view
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -10,79 +12,98 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.opencontrol.MyNavGraphs.mainGraph
-import com.example.opencontrol.R
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.tab.CurrentTab
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.example.opencontrol.ui.theme.SelectedTab
 import com.example.opencontrol.ui.theme.UnSelectedTab
-import com.example.opencontrol.view.destinations.ChatTabDestination
-import com.example.opencontrol.view.destinations.HomeTabDestination
-import com.example.opencontrol.view.destinations.NoteTabDestination
-import com.example.opencontrol.view.destinations.UserTabDestination
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import timber.log.Timber
+import com.example.opencontrol.view.chatTab.ChatTab
+import com.example.opencontrol.view.homeTab.HomeTab
+import com.example.opencontrol.view.noteTab.NoteTab
+import com.example.opencontrol.view.userProfileTab.UserProfileTab
 
-@Destination
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainScreen(navigator: DestinationsNavigator) {
-    val navController = rememberNavController()
-    Scaffold(
-        bottomBar = {
-            BottomBar(navController)
-        }
-    ) {
-        Box(modifier = Modifier.padding(it)) {
-            DestinationsNavHost(
-                navController = navController, navGraph = mainGraph
-            )
-        }
-    }
-}
-
-@Composable
-fun BottomBar(
-    navController: NavController
-) {
-    val currentDestination =
-        navController.appCurrentDestinationAsState().value
-    Timber.d("@@@ currentDestination = $currentDestination")
-
-    BottomNavigation(backgroundColor = Color.White) {
-        BottomBarDestination.values().forEach { destination ->
-            BottomNavigationItem(
-                selected = currentDestination == destination.direction,
-                onClick = {
-                    navController.navigate(destination.direction.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+object MainScreen : Screen {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    override fun Content() {
+        TabNavigator(HomeTab) {
+            Scaffold(
+                content = {
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(it)){
+                        CurrentTab()
                     }
                 },
-                icon = { Icon(ImageVector.vectorResource(destination.icon), null) },
-                selectedContentColor = SelectedTab,
-                unselectedContentColor = UnSelectedTab,
+                bottomBar = {
+                    BottomNavigation(backgroundColor = Color.White) {
+                        TabNavigationItem(HomeTab)
+                        TabNavigationItem(NoteTab)
+                        TabNavigationItem(ChatTab)
+                        TabNavigationItem(UserProfileTab)
+                    }
+                }
             )
         }
     }
 }
 
-enum class BottomBarDestination(
-    val direction: DirectionDestinationSpec,
-    val icon: Int
-) {
-    Home(HomeTabDestination, R.drawable.home_icon),
-    Note(NoteTabDestination, R.drawable.note_icon),
-    Chat(ChatTabDestination, R.drawable.chat_icon),
-    User(UserTabDestination, R.drawable.user_icon),
+@Composable
+private fun RowScope.TabNavigationItem(tab: Tab) {
+    val tabNavigator = LocalTabNavigator.current
+
+    BottomNavigationItem(
+        selected = tabNavigator.current.key == tab.key,
+        onClick = { tabNavigator.current = tab },
+        icon = {
+            Icon(
+                painter = tab.options.icon!!,
+                contentDescription = tab.options.title
+            )
+        },
+        selectedContentColor = SelectedTab, unselectedContentColor = UnSelectedTab
+    )
 }
+//
+//@Composable
+//fun BottomBar(
+//    navController: NavController
+//) {
+//    val currentDestination =
+//        navController.appCurrentDestinationAsState().value
+//    Timber.d("@@@ currentDestination = $currentDestination")
+//
+//    BottomNavigation(backgroundColor = Color.White) {
+//        BottomBarDestination.values().forEach { destination ->
+//            BottomNavigationItem(
+//                selected = currentDestination == destination.direction,
+//                onClick = {
+//                    navController.navigate(destination.direction.route) {
+//                        navController.graph.startDestinationRoute?.let { route ->
+//                            popUpTo(route) {
+//                                saveState = true
+//                            }
+//                        }
+//                        launchSingleTop = true
+//                        restoreState = true
+//                    }
+//                },
+//                icon = { Icon(ImageVector.vectorResource(destination.icon), null) },
+//                selectedContentColor = SelectedTab,
+//                unselectedContentColor = UnSelectedTab,
+//            )
+//        }
+//    }
+//}
+//
+//enum class BottomBarDestination(
+//    val direction: DirectionDestinationSpec,
+//    val icon: Int
+//) {
+//    Home(HomeTabDestination, R.drawable.home_icon),
+//    Note(NoteTabDestination, R.drawable.note_icon),
+//    Chat(ChatTabDestination, R.drawable.chat_icon),
+//    User(UserTabDestination, R.drawable.user_icon),
+//}
