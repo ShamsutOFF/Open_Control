@@ -164,7 +164,7 @@ private fun NoteInfoBlock(note: Note) {
         InfoBlockDivider()
         FieldInfoRow("Номер объекта:", note.objectNumber)
         InfoBlockDivider()
-        FieldInfoRow("Инспектор:", note.inspectorFIO)
+        FieldInfoRow("Инспектор:", "${note.inspectorFIO}")
         InfoBlockDivider()
         FieldInfoRow("Дополнительно:", note.info)
     }

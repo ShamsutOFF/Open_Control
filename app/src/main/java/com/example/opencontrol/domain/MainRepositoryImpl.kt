@@ -1,6 +1,7 @@
 package com.example.opencontrol.domain
 
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.model.Person
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
@@ -73,11 +74,13 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
         "Сергеевич"
     )
 
-    private fun generateRandomFIO(): String {
+    private fun generateRandomPerson(): Person {
+
         val firstName = firstNames.random()
         val lastName = lastNames.random()
         val patronymic = patronymics.random()
-        return "$lastName $firstName $patronymic"
+//        return "$lastName $firstName $patronymic"
+        return Person(firstNames.random(), lastNames.random(), patronymics.random())
     }
 
     private fun generateRandomDateWithinCurrentMonth(): LocalDate {
@@ -106,7 +109,7 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
             "empty",
             "empty",
             LocalDate.now(),
-            "empty",
+            Person("noName","noName","noName"),
             "empty",
             "empty",
             "empty"
@@ -118,7 +121,7 @@ class MainRepositoryImpl(private val api: MyApi) : MainRepository {
             "проверка пожарной безопасности 1",
             generateRandomTime(),
             generateRandomDateWithinCurrentMonth(),
-            generateRandomFIO(),
+            generateRandomPerson(),
             "выездная проверка",
             Random.nextInt(10000, 99999).toString(),
             "Подготовить паспорт объекта"
