@@ -103,7 +103,6 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun OpenControlTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -129,7 +128,7 @@ fun OpenControlTheme(
         SideEffect {
             val window = (view.context as Activity).window
             window.statusBarColor = Invisible.toArgb()
-            window.isStatusBarContrastEnforced = true
+//            window.isStatusBarContrastEnforced = true
 //            window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }

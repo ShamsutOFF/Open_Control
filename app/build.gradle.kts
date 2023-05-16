@@ -93,6 +93,10 @@ dependencies {
     //Coil
     implementation ("io.coil-kt:coil-compose:2.2.2")
 
+    //Chat
+    implementation ("io.getstream:stream-chat-android-compose:5.12.0")
+    implementation ("androidx.compose.material:material-icons-extended:$compose")
+
     implementation (platform("androidx.compose:compose-bom:2022.10.00"))
     implementation ("androidx.compose.ui:ui:$compose")
     implementation ("androidx.compose.ui:ui-graphics")

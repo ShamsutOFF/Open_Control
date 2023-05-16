@@ -1,5 +1,6 @@
 package com.example.opencontrol.view.chatTab
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -10,8 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.example.opencontrol.R
 
 object ChatTab : Tab {
@@ -29,18 +32,13 @@ object ChatTab : Tab {
             }
         }
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     override fun Content() {
-        ChatTabContent()
-    }
-}
-
-@Composable
-private fun ChatTabContent() {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = "ChatTab")
+        Navigator(screen = ChatListScreen()) { navigator ->
+            SlideTransition(navigator = navigator) {
+                it.Content()
+            }
+        }
     }
 }
