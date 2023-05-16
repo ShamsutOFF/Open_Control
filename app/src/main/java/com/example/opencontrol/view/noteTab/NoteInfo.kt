@@ -1,6 +1,7 @@
 package com.example.opencontrol.view.noteTab
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.example.opencontrol.view.chatTab.VideoRoomScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
@@ -101,6 +103,7 @@ private fun HeaderBlock() {
 
 @Composable
 private fun ChatAndVideoBlock() {
+    val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -111,7 +114,10 @@ private fun ChatAndVideoBlock() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
+                .padding(4.dp)
+                .clickable{
+                          Timber.d("@@@ Переход в чат с инспектором!")
+                },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -133,7 +139,9 @@ private fun ChatAndVideoBlock() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp),
+                .padding(4.dp).clickable{
+                    navigator.push(VideoRoomScreen())
+                },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {

@@ -2,6 +2,7 @@ package com.example.opencontrol.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -102,6 +103,7 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun OpenControlTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -126,7 +128,9 @@ fun OpenControlTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = Invisible.toArgb()
+            window.isStatusBarContrastEnforced = true
+//            window.statusBarColor = colorScheme.primary.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
