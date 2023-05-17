@@ -43,7 +43,7 @@ class NoteScreen : Screen {
 }
 
 @Composable
-fun NoteTabContent() {
+private fun NoteTabContent() {
     val viewModel = getViewModel<MainViewModel>()
     val markedDateList = viewModel.getAllNotes().map { note ->
         note.date

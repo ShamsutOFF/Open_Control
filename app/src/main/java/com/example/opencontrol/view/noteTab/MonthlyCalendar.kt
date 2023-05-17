@@ -3,7 +3,6 @@ package com.example.opencontrol.view.noteTab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,44 +17,41 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.LightColors
-import kotlinx.coroutines.launch
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MonthlyCalendar(
     selectedDate: LocalDate,
@@ -67,62 +63,28 @@ fun MonthlyCalendar(
     val monthTitle = currentMonth.month.getDisplayName(TextStyle.FULL_STANDALONE, Locale("ru"))
     val yearTitle = currentMonth.year.toString()
 
-    val size by remember { mutableStateOf(Size.Zero) }
-    val swipeableState = rememberSwipeableState(SwipeDirection.Initial)
-    val density = LocalDensity.current
-    val boxSize = 60.dp
-    val width = remember(size) {
-        if (size.width == 0f) {
-            1f
-        } else {
-            size.width - with(density) { boxSize.toPx() }
-        }
-    }
-    val scope = rememberCoroutineScope()
-    if (swipeableState.isAnimationRunning) {
-        DisposableEffect(Unit) {
-            onDispose {
-                when (swipeableState.currentValue) {
-                    SwipeDirection.Right -> {
-                        monthOffset--
-                        println("swipe right")
-                    }
-                    SwipeDirection.Left -> {
-                        monthOffset++
-                        println("swipe left")
-                    }
-                    else -> {
-                        return@onDispose
-                    }
-                }
-                scope.launch {
-                    // in your real app if you don't have to display offset,
-                    // snap without animation
-                     swipeableState.snapTo(SwipeDirection.Initial)
-//                    swipeableState.animateTo(SwipeDirection.Initial)
-                }
-            }
-        }
-    }
+    val pagerState = rememberPagerState(
+        initialPage = monthOffset + Int.MAX_VALUE / 2
+    )
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { }
-            .swipeable(
-                state = swipeableState,
-                anchors = mapOf(
-                    0f to SwipeDirection.Left,
-                    width / 2 to SwipeDirection.Initial,
-                    width to SwipeDirection.Right,
-                ),
-                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                orientation = Orientation.Horizontal
-            )
-    ) {
-        MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
-        WeekdayHeader()
-        DaysGrid(currentMonth, markedDateList, selectedDate, onDateSelected)
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .map { it - Int.MAX_VALUE / 2 }
+            .collect { monthOffset = it }
+    }
+    MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
+
+    HorizontalPager(
+        count = Int.MAX_VALUE,
+        state = pagerState,
+        modifier = Modifier.fillMaxWidth()
+    ) { page ->
+        val calculatedMonthOffset = page - Int.MAX_VALUE / 2
+        val currentMonthInPager = YearMonth.now().plusMonths(calculatedMonthOffset.toLong())
+        Column(Modifier.fillMaxWidth()) {
+            WeekdayHeader()
+            DaysGrid(currentMonthInPager, markedDateList, selectedDate, onDateSelected)
+        }
     }
 }
 
@@ -279,12 +241,6 @@ fun DayView(
             }
         }
     }
-}
-
-enum class SwipeDirection(val raw: Int) {
-    Left(0),
-    Initial(1),
-    Right(2),
 }
 
 enum class WeekDays(val shortName: String) {

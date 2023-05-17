@@ -74,7 +74,7 @@ class NewNoteScreen : Screen {
 }
 
 @Composable
-fun NewNoteContent() {
+private fun NewNoteContent() {
     val viewModel = getViewModel<MainViewModel>()
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally

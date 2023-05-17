@@ -97,6 +97,9 @@ dependencies {
     implementation ("io.getstream:stream-chat-android-compose:5.12.0")
     implementation ("androidx.compose.material:material-icons-extended:$compose")
 
+    //Accompanist
+    implementation ("com.google.accompanist:accompanist-pager:0.25.1")
+
     implementation (platform("androidx.compose:compose-bom:2022.10.00"))
     implementation ("androidx.compose.ui:ui:$compose")
     implementation ("androidx.compose.ui:ui-graphics")
