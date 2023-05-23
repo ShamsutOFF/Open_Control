@@ -1,11 +1,10 @@
 package com.example.opencontrol.view.enterScreen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,10 +29,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -52,6 +51,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.OrangeMain
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
+import com.example.opencontrol.view.MainScreen
 import timber.log.Timber
 
 class LoginScreen : Screen {
@@ -94,6 +94,7 @@ private fun LoginScreenContent() {
         ForgotPasswordTextButton()
         EnterButton()
         RegisterTextButton()
+        TempTestButton()
     }
 }
 
@@ -205,11 +206,20 @@ private fun ForgotPasswordTextButton() {
 
 @Composable
 private fun EnterButton() {
+    val navigator = LocalNavigator.currentOrThrow
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp)
-            .height(60.dp),
+            .height(60.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = { Timber.d("@@@ onPress!!!") },
+                    onDoubleTap = { Timber.d("@@@ onDoubleTap!!!") },
+                    onLongPress = { navigator.push(MainScreen) },
+                    onTap = { Timber.d("@@@ onTap!!!") }
+                )
+            },
         onClick = {
             Timber.d("@@@ Login!!!")
         },
@@ -228,12 +238,35 @@ private fun EnterButton() {
 
 @Composable
 private fun RegisterTextButton() {
+    val navigator = LocalNavigator.currentOrThrow
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Text(
             modifier = Modifier
                 .padding(vertical = 16.dp)
-                .clickable { Timber.d("@@@ Click to register!") },
+                .clickable {
+                    navigator.push(RegistrationScreen())
+                    Timber.d("@@@ Click to register!")
+                },
             text = "Зарегистрироваться",
+            fontWeight = FontWeight.SemiBold,
+            color = OrangeMain,
+            fontSize = 13.sp,
+            textDecoration = TextDecoration.Underline
+        )
+    }
+}
+@Composable
+private fun TempTestButton() {
+    val navigator = LocalNavigator.currentOrThrow
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .clickable {
+                    navigator.push(MainScreen)
+                    Timber.d("@@@ Click to register!")
+                },
+            text = "Дверь разработчика",
             fontWeight = FontWeight.SemiBold,
             color = OrangeMain,
             fontSize = 13.sp,
