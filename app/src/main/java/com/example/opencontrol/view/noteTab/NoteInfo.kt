@@ -114,31 +114,6 @@ private fun ChatAndVideoBlock() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(4.dp)
-                .clickable{
-                          Timber.d("@@@ Переход в чат с инспектором!")
-                },
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.chat_icon),
-                contentDescription = "",
-                modifier = Modifier
-                    .rotate(90f)
-                    .size(30.dp)
-            )
-            Text(
-                text = "Чат с инспектором",
-                modifier = Modifier
-                    .padding(8.dp),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
                 .padding(4.dp).clickable{
                     navigator.push(VideoRoomScreen())
                 },
@@ -179,7 +154,7 @@ private fun NoteInfoBlock(note: Note) {
         InfoBlockDivider()
         FieldInfoRow("Номер объекта:", note.objectNumber)
         InfoBlockDivider()
-        FieldInfoRow("Инспектор:", "${note.inspectorFIO}")
+        FieldInfoRow("Инспектор:", note.inspectorFIO.lastName + " " + note.inspectorFIO.firstName + " " + note.inspectorFIO.patronymic)
         InfoBlockDivider()
         FieldInfoRow("Дополнительно:", note.info)
     }

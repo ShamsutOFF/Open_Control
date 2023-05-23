@@ -34,6 +34,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -93,8 +94,6 @@ dependencies {
     //Coil
     implementation ("io.coil-kt:coil-compose:2.2.2")
 
-    //Chat
-    implementation ("io.getstream:stream-chat-android-compose:5.12.0")
     implementation ("androidx.compose.material:material-icons-extended:$compose")
 
     //Accompanist

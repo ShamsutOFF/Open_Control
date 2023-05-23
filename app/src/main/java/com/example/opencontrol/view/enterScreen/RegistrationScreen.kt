@@ -1,4 +1,4 @@
-package com.example.opencontrol.view
+package com.example.opencontrol.view.enterScreen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,29 +13,29 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.opencontrol.view.MainScreen
 
-class LoginScreen : Screen {
-
+class RegistrationScreen :Screen {
     @Composable
     override fun Content() {
-        LoginForm()
+        RegistrationScreenContent()
     }
+}
 
-    @Composable
-    private fun LoginForm() {
-        val navigator = LocalNavigator.currentOrThrow
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(verticalArrangement = Arrangement.Center) {
-                Text(text = "LoginScreen")
-                Button(
-                    onClick = { navigator.push(MainScreen) },
-                    shape = RoundedCornerShape(40)
-                ) {
-                    Text(text = "Войти")
-                }
+@Composable
+private fun RegistrationScreenContent() {
+    val navigator = LocalNavigator.currentOrThrow
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(verticalArrangement = Arrangement.Center) {
+            Text(text = "RegistrationScreenContent")
+            Button(
+                onClick = { navigator.push(MainScreen) },
+                shape = RoundedCornerShape(40)
+            ) {
+                Text(text = "Войти")
             }
         }
     }

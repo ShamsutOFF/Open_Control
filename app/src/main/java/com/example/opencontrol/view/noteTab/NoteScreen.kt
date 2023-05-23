@@ -127,7 +127,7 @@ private fun NoteCard(note: Note) {
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = "Инспектор: ${note.inspectorFIO}",
+            text = "Инспектор: ${note.inspectorFIO.lastName + " " + note.inspectorFIO.firstName + " " + note.inspectorFIO.patronymic}",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),

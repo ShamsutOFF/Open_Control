@@ -10,6 +10,7 @@ val PrimaryLidht = Color(0xFF6650a4)
 val ScondaryLight = Color(0xFF625b71)
 val TertiaryLight = Color(0xFF7D5260)
 
+val TestGreen = Color(0xFF18FF00)
 
 
 val SelectedTab = Color(0xFFE35036)
@@ -20,6 +21,9 @@ val GreyText = Color(0xFF7A7A7A)
 val GreyBackground = Color(0xFFF4F4F4)
 val WeeklyCalendarSelectedDateBackground = Color(0xFFE7EBFF)
 val WeeklyCalendarSelectedDateText = Color(0xFF455CC7)
+val OrangeBackground = Color(0x4FFFE0DB)
+val OrangeMain = Color(0xFFE35036)
+val OrangeMainTransparent73 = Color(0xBAE35036)
 val Invisible = Color(0x0)
 
 
