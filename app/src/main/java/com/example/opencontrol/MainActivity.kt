@@ -13,9 +13,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.example.opencontrol.ui.theme.OpenControlTheme
-import com.example.opencontrol.view.chatTab.ChatListScreen
 import com.example.opencontrol.view.enterScreen.EnterScreen
-import com.example.opencontrol.view.enterScreen.LoginScreen
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)

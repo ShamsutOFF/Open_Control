@@ -26,8 +26,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.OrangeBackground
-import com.example.opencontrol.ui.theme.OrangeMain
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
+import com.example.opencontrol.ui.theme.md_theme_light_primary
 import timber.log.Timber
 
 class EnterScreen : Screen {
@@ -59,7 +59,7 @@ private fun EnterScreenContent() {
                     .padding(8.dp)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(12))
-                    .background(OrangeMain)
+                    .background(md_theme_light_primary)
                     .clickable {
                         Timber.d("@@@ КАК БИЗНЕС")
                         navigator.push(LoginScreen())
@@ -71,7 +71,7 @@ private fun EnterScreenContent() {
                     .padding(8.dp)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(12))
-                    .background(OrangeMain)
+                    .background(md_theme_light_primary)
                     .clickable {
                         Timber.d("@@@ КАК ИНСПЕКТОР")
                         navigator.push(LoginScreen())
@@ -84,7 +84,7 @@ private fun EnterScreenContent() {
 }
 
 @Composable
-private fun OpenControlLogo() {
+fun OpenControlLogo() {
     Image(
         painter = painterResource(id = R.drawable.open_control_logo),
         contentDescription = "Лого", modifier = Modifier.padding(start = 28.dp)
@@ -92,7 +92,7 @@ private fun OpenControlLogo() {
 }
 
 @Composable
-private fun MoscowLogo() {
+fun MoscowLogo() {
     Row(
         modifier = Modifier
             .fillMaxWidth()

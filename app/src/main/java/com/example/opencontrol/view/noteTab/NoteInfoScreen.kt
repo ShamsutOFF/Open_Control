@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -70,7 +69,7 @@ private fun NoteInfoContent(noteId: String) {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { ChatAndVideoBlock() }
+            item { VideoBlock() }
             item { NoteInfoBlock(note) }
             item { CancelButton(viewModel::deleteNoteById, noteId) }
         }
@@ -102,12 +101,12 @@ private fun HeaderBlock() {
 }
 
 @Composable
-private fun ChatAndVideoBlock() {
+private fun VideoBlock() {
     val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 20.dp)
+            .padding(vertical = 20.dp, horizontal = 16.dp)
             .background(color = md_theme_light_inversePrimary, shape = RoundedCornerShape(16.dp))
 
     ) {
@@ -126,7 +125,7 @@ private fun ChatAndVideoBlock() {
                 modifier = Modifier.size(30.dp)
             )
             Text(
-                text = "Видео-конференция",
+                text = "Начать консультирование",
                 modifier = Modifier
                     .padding(8.dp),
                 fontSize = 14.sp,

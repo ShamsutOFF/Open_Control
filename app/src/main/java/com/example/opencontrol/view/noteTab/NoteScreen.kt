@@ -38,12 +38,12 @@ class NoteScreen : Screen {
     @Composable
     override fun Content() {
         Timber.d("@@@ Content()")
-        NoteTabContent()
+        NoteScreenContent()
     }
 }
 
 @Composable
-private fun NoteTabContent() {
+private fun NoteScreenContent() {
     val viewModel = getViewModel<MainViewModel>()
     val markedDateList = viewModel.getAllNotes().map { note ->
         note.date

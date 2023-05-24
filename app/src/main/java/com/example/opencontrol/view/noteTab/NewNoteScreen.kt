@@ -81,7 +81,7 @@ private fun NewNoteContent() {
     ) {
         HeaderBlock()
         LazyColumn(
-            modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item { SelectableItem("Kонтрольно-надзорный орган", viewModel.getControlAgencies()) }
             item { SelectableItem("Вид контроля", viewModel.getControlTypes()) }
@@ -129,7 +129,10 @@ private fun SelectableItem(title: String, values: List<String>) {
             .fillMaxWidth()
     ) {
         Text(text = title, fontSize = 14.sp)
-        OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { expanded = true }) {
+        OutlinedButton(modifier = Modifier
+            .fillMaxWidth(),
+            shape = RoundedCornerShape(40),
+            onClick = { expanded = true }) {
             Text(text = selectedOption)
         }
         DropdownMenu(
@@ -229,9 +232,7 @@ private fun ExtraInfoItem(title: String) {
             label = { Text(text = "Комментарий к проверке") },
             onValueChange = { extraText = it },
             modifier = Modifier
-//                .padding(vertical = 8.dp)
                 .fillMaxWidth(),
-//                .clearFocusOnKeyboardDismiss(),
             shape = androidx.compose.foundation.shape.CircleShape,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
@@ -268,7 +269,6 @@ private fun AddPhotoItem() {
     }
 
     LazyRow(
-//        modifier = Modifier.height(100.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
     ) {
         items(selectedImagesUris) { uri ->
@@ -280,7 +280,6 @@ private fun AddPhotoItem() {
                     model = uri,
                     contentDescription = null,
                     modifier = Modifier.height(100.dp),
-//                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
             }

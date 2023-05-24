@@ -47,8 +47,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.ui.theme.Invisible
-import com.example.opencontrol.ui.theme.OrangeMain
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
+import com.example.opencontrol.ui.theme.md_theme_light_primary
 import timber.log.Timber
 
 class RegistrationScreen :Screen {
@@ -88,7 +88,7 @@ private fun RegistrationScreenContent() {
             { passwordVisible = it }
         )
         HaveAccountTextButton()
-        EnterButton()
+        BigSquareButton()
     }
 }
 
@@ -118,13 +118,13 @@ private fun LoginTextField(
         }),
         singleLine = true,
         colors = TextFieldDefaults.textFieldColors(
-            focusedLabelColor = OrangeMain,
+            focusedLabelColor = md_theme_light_primary,
             unfocusedLabelColor = OrangeMainTransparent73,
-            cursorColor = OrangeMain,
+            cursorColor = md_theme_light_primary,
             containerColor = Invisible,
-            textColor = OrangeMain,
-            selectionColors = TextSelectionColors(OrangeMain, OrangeMain),
-            focusedIndicatorColor = OrangeMain,
+            textColor = md_theme_light_primary,
+            selectionColors = TextSelectionColors(md_theme_light_primary, md_theme_light_primary),
+            focusedIndicatorColor = md_theme_light_primary,
             unfocusedIndicatorColor = OrangeMainTransparent73,
         )
     )
@@ -168,15 +168,15 @@ private fun PasswordTextField(
             }
         },
         colors = TextFieldDefaults.textFieldColors(
-            focusedLabelColor = OrangeMain,
+            focusedLabelColor = md_theme_light_primary,
             unfocusedLabelColor = OrangeMainTransparent73,
-            focusedTrailingIconColor = OrangeMain,
+            focusedTrailingIconColor = md_theme_light_primary,
             unfocusedTrailingIconColor = OrangeMainTransparent73,
-            cursorColor = OrangeMain,
+            cursorColor = md_theme_light_primary,
             containerColor = Invisible,
-            textColor = OrangeMain,
-            selectionColors = TextSelectionColors(OrangeMain, OrangeMain),
-            focusedIndicatorColor = OrangeMain,
+            textColor = md_theme_light_primary,
+            selectionColors = TextSelectionColors(md_theme_light_primary, md_theme_light_primary),
+            focusedIndicatorColor = md_theme_light_primary,
             unfocusedIndicatorColor = OrangeMainTransparent73,
         )
     )
@@ -194,7 +194,7 @@ private fun HaveAccountTextButton() {
                     Timber.d("@@@ Click to Уже есть аккаунт?") },
             text = "Уже есть аккаунт?",
             fontWeight = FontWeight.SemiBold,
-            color = OrangeMain,
+            color = md_theme_light_primary,
             fontSize = 13.sp,
             textDecoration = TextDecoration.Underline
         )
@@ -202,7 +202,7 @@ private fun HaveAccountTextButton() {
 }
 
 @Composable
-private fun EnterButton() {
+private fun BigSquareButton() {
     Button(
         modifier = Modifier
             .fillMaxWidth()
@@ -212,7 +212,7 @@ private fun EnterButton() {
             Timber.d("@@@ Click to Зарегестрироваться!!!")
         },
         shape = RoundedCornerShape(32),
-        colors = ButtonDefaults.buttonColors(containerColor = OrangeMain)
+        colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
     ) {
         Text(
             text = "Зарегестрироваться",
