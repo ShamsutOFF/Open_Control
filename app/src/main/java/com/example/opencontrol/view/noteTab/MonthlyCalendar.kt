@@ -1,5 +1,6 @@
 package com.example.opencontrol.view.noteTab
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -42,16 +45,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.LightColors
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MonthlyCalendar(
     selectedDate: LocalDate,
@@ -72,10 +72,14 @@ fun MonthlyCalendar(
             .map { it - Int.MAX_VALUE / 2 }
             .collect { monthOffset = it }
     }
-    MonthSelector(monthOffset, monthTitle, yearTitle) { monthOffset = it }
+    MonthSelector(monthOffset, monthTitle, yearTitle) {
+            offset ->
+        monthOffset = offset
+    }
 
     HorizontalPager(
-        count = Int.MAX_VALUE,
+        pageCount = Int.MAX_VALUE,
+        beyondBoundsPageCount = 1,
         state = pagerState,
         modifier = Modifier.fillMaxWidth()
     ) { page ->
@@ -86,6 +90,9 @@ fun MonthlyCalendar(
             DaysGrid(currentMonthInPager, markedDateList, selectedDate, onDateSelected)
         }
     }
+    LaunchedEffect(monthOffset) {
+        pagerState.animateScrollToPage(monthOffset + Int.MAX_VALUE / 2)
+    }
 }
 
 @Composable
@@ -93,7 +100,7 @@ private fun MonthSelector(
     monthOffset: Int,
     monthTitle: String,
     yearTitle: String,
-    function: (Int) -> Unit
+    onMonthOffsetChanged: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -102,7 +109,7 @@ private fun MonthSelector(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { function(monthOffset - 1) }, modifier = Modifier.weight(1f)) {
+        IconButton(onClick = { onMonthOffsetChanged(monthOffset - 1) }, modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowLeft, null)
         }
 
@@ -113,7 +120,7 @@ private fun MonthSelector(
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(onClick = { function(monthOffset + 1) }, modifier = Modifier.weight(1f)) {
+        IconButton(onClick = { onMonthOffsetChanged(monthOffset + 1) }, modifier = Modifier.weight(1f)) {
             Icon(Icons.Filled.KeyboardArrowRight, null)
         }
     }

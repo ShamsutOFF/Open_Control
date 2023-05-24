@@ -37,7 +37,7 @@ import java.util.Locale
 class NoteScreen : Screen {
     @Composable
     override fun Content() {
-        Timber.d("@@@ Content()")
+        Timber.d("@@@ NoteScreenContent()")
         NoteScreenContent()
     }
 }

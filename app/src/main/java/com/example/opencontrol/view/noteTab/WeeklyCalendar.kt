@@ -1,5 +1,6 @@
 package com.example.opencontrol.view.noteTab
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -37,9 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateBackground
 import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateText
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.flow.map
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -48,7 +48,7 @@ import java.time.format.TextStyle
 import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit) {
     var innerSelectedDate by remember {
@@ -74,7 +74,8 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
     }
 
     HorizontalPager(
-        count = Int.MAX_VALUE,
+        pageCount = Int.MAX_VALUE,
+        beyondBoundsPageCount = 1,
         state = pagerState,
         modifier = Modifier.fillMaxWidth()
     ) { page ->
