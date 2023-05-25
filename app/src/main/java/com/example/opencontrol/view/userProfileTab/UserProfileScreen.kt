@@ -349,7 +349,7 @@ private fun AccountExitButton() {
             Icon(Icons.Filled.ExitToApp, null, tint = ExitIconIcon)
         }
         Text(
-            text = "Сведения о пользователе",
+            text = "Выход",
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,
             modifier = Modifier.padding(16.dp)

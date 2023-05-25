@@ -16,22 +16,22 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,9 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
@@ -61,8 +59,9 @@ import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.LightGreyBorder
-import com.example.opencontrol.ui.theme.Typography
-import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.example.opencontrol.view.EnterInfoItemBlock
+import com.example.opencontrol.view.HeaderBlock
+import com.example.opencontrol.view.SelectableItemBlock
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
@@ -79,15 +78,18 @@ private fun NewNoteContent() {
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderBlock()
+        HeaderBlock("Новая запись")
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { SelectableItem("Kонтрольно-надзорный орган", viewModel.getControlAgencies()) }
-            item { SelectableItem("Вид контроля", viewModel.getControlTypes()) }
-            item { SelectableItem("Подразделение", viewModel.getDepartments()) }
+            item { SelectableItemBlock("Kонтрольно-надзорный орган", viewModel.getControlAgencies()) }
+            item { SelectableItemBlock("Вид контроля", viewModel.getControlTypes()) }
+            item { SelectableItemBlock("Подразделение", viewModel.getDepartments()) }
             item { ToggleItem("Выберите тип встречи") }
-            item { ExtraInfoItem("Дополнительная информация") }
+            item { EnterInfoItemBlock("Дополнительная информация", "Введите комментарий к проверке") }
             item { AddPhotoItem() }
             item { WeeklyCalendar(viewModel.selectedDate, { }) }
             item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
@@ -95,61 +97,41 @@ private fun NewNoteContent() {
         }
     }
 }
-
-@Composable
-private fun HeaderBlock() {
-    Column(
-        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        var width by remember { mutableStateOf(Int.MIN_VALUE) }
-        val widthText = LocalDensity.current.run { width.toDp() }
-
-        Box(Modifier.onGloballyPositioned { coordinates ->
-            width = coordinates.size.width
-        }) {
-            Text(text = "Новая запись", style = Typography.headlineMedium)
-        }
-        Divider(
-            color = md_theme_light_primary,
-            thickness = 3.dp,
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .width(widthText)
-        )
-    }
-}
-
-@Composable
-private fun SelectableItem(title: String, values: List<String>) {
-    var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Text(text = title, fontSize = 14.sp)
-        OutlinedButton(modifier = Modifier
-            .fillMaxWidth(),
-            shape = RoundedCornerShape(40),
-            onClick = { expanded = true }) {
-            Text(text = selectedOption)
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            values.forEachIndexed { index, it ->
-                DropdownMenuItem(text = { Text(text = it) }, onClick = {
-                    selectedOption = it
-                    expanded = false
-                })
-                if (index != values.size - 1) Divider()
-            }
-        }
-    }
-}
+//
+//@Composable
+//private fun SelectableItem(title: String, values: List<String>) {
+//    var expanded by remember { mutableStateOf(false) }
+//    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
+//    Column(
+//        modifier = Modifier
+//            .padding(8.dp)
+//            .fillMaxWidth()
+//    ) {
+//        Text(text = title, fontSize = 14.sp)
+//        OutlinedButton(
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            shape = RoundedCornerShape(32),
+//            onClick = { expanded = true },
+//            colors = ButtonDefaults.outlinedButtonColors(contentColor = GreyText)
+//        ) {
+//            Text(text = selectedOption)
+//        }
+//        DropdownMenu(
+//            expanded = expanded,
+//            onDismissRequest = { expanded = false },
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            values.forEachIndexed { index, it ->
+//                DropdownMenuItem(text = { Text(text = it) }, onClick = {
+//                    selectedOption = it
+//                    expanded = false
+//                })
+//                if (index != values.size - 1) Divider()
+//            }
+//        }
+//    }
+//}
 
 @Composable
 private fun ToggleItem(title: String) {
@@ -184,7 +166,7 @@ private fun ToggleButton(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .padding(4.dp)
-            .clip(RoundedCornerShape(40))
+            .clip(RoundedCornerShape(32))
             .width(cellWidth)
             .height(40.dp)
             .background(
@@ -200,7 +182,7 @@ private fun ToggleButton(
                 }, color = when {
                     isSelected -> Color.Transparent
                     else -> LightGreyBorder
-                }, shape = RoundedCornerShape(40)
+                }, shape = RoundedCornerShape(32)
             )
             .clickable { onTextSelected(text) }
     ) {
@@ -213,47 +195,43 @@ private fun ToggleButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Composable
-private fun ExtraInfoItem(title: String) {
-    var extraText by remember {
-        mutableStateOf("")
-    }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Text(text = title, fontSize = 14.sp)
-        OutlinedTextField(
-            value = extraText,
-            label = { Text(text = "Комментарий к проверке") },
-            onValueChange = { extraText = it },
-            modifier = Modifier
-                .fillMaxWidth(),
-            shape = androidx.compose.foundation.shape.CircleShape,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                keyboardController?.hide()
-                focusManager.clearFocus()
-            })
-        )
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+//@Composable
+//private fun ExtraInfoItem(title: String) {
+//    var extraText by remember {
+//        mutableStateOf("")
+//    }
+//    val keyboardController = LocalSoftwareKeyboardController.current
+//    val focusManager = LocalFocusManager.current
+//    Column(
+//        modifier = Modifier
+//            .padding(8.dp)
+//            .fillMaxWidth()
+//    ) {
+//        Text(text = title, fontSize = 14.sp)
+//        OutlinedTextField(
+//            value = extraText,
+//            label = { Text(text = "Комментарий к проверке") },
+//            onValueChange = { extraText = it },
+//            modifier = Modifier
+//                .fillMaxWidth(),
+//            shape = RoundedCornerShape(32),
+//            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+//            keyboardActions = KeyboardActions(onDone = {
+//                keyboardController?.hide()
+//                focusManager.clearFocus()
+//            })
+//        )
+//    }
+//}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AddPhotoItem() {
-    var selectedImagesUris by remember {
-        mutableStateOf<List<Uri>>(emptyList())
-    }
+    val viewModel = getViewModel<MainViewModel>()
     val multiplePhotoPickerLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(5),
-            onResult = { uris -> selectedImagesUris = uris })
-
+            onResult = { uris -> viewModel.photoUris.addAll(uris) })
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -271,18 +249,40 @@ private fun AddPhotoItem() {
     LazyRow(
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
     ) {
-        items(selectedImagesUris) { uri ->
-            OutlinedCard(
-                onClick = { selectedImagesUris = selectedImagesUris.filter { it != uri } },
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-            ) {
-                AsyncImage(
-                    model = uri,
-                    contentDescription = null,
-                    modifier = Modifier.height(100.dp),
-                    contentScale = ContentScale.Crop
-                )
+        items(viewModel.photoUris) { uri ->
+            ImageBox(uri = uri) { delUri ->
+                viewModel.photoUris.remove(delUri)
             }
+        }
+    }
+}
+
+@Composable
+fun ImageBox(uri: Uri, deletePhoto: (Uri) -> Unit) {
+    Box(
+        modifier = Modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .height(100.dp)
+            .clip(RoundedCornerShape(12))
+            .aspectRatio(1f),
+        contentAlignment = Alignment.TopEnd
+    ) {
+        AsyncImage(
+            model = uri,
+            contentDescription = null,
+            modifier = Modifier.height(100.dp),
+            contentScale = ContentScale.Crop
+        )
+        Box(
+            modifier = Modifier
+                .offset(x = (-5).dp, y = 5.dp)
+                .height(15.dp)
+                .clip(CircleShape)
+                .background(LightColors.primary)
+                .aspectRatio(1f)
+                .clickable { deletePhoto(uri) }
+        ) {
+            Icon(Icons.Filled.Close, null, tint = LightColors.onPrimary)
         }
     }
 }
@@ -343,7 +343,7 @@ private fun NoteButton() {
         Button(
             onClick = {
                 Timber.d("@@@ Implement it!!!")
-            }, shape = RoundedCornerShape(40)
+            }, shape = RoundedCornerShape(32)
         ) {
             Text(
                 text = "Записаться",

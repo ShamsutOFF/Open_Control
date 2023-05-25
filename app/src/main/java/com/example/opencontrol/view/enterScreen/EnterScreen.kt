@@ -31,6 +31,7 @@ import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import com.example.opencontrol.view.MainScreen
+import com.example.opencontrol.view.userProfileTab.AddBusinessScreen
 import com.example.opencontrol.view.userProfileTab.UserProfileScreen
 import timber.log.Timber
 
@@ -96,7 +97,7 @@ private fun TempTestButton() {
             modifier = Modifier
                 .padding(vertical = 16.dp)
                 .clickable {
-                    navigator.push(UserProfileScreen())
+                    navigator.push(AddBusinessScreen())
                     Timber.d("@@@ Click to register!")
                 },
             text = "Дверь разработчика",

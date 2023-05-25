@@ -3,14 +3,12 @@ package com.example.opencontrol.view.noteTab
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -20,15 +18,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -40,9 +34,8 @@ import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyDivider
-import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
-import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.chatTab.VideoRoomScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
@@ -64,7 +57,7 @@ private fun NoteInfoContent(noteId: String) {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderBlock()
+        HeaderBlock("Информация о записи")
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -73,30 +66,6 @@ private fun NoteInfoContent(noteId: String) {
             item { NoteInfoBlock(note) }
             item { CancelButton(viewModel::deleteNoteById, noteId) }
         }
-    }
-}
-
-@Composable
-private fun HeaderBlock() {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        var width by remember { mutableStateOf(Int.MIN_VALUE) }
-        val widthText = LocalDensity.current.run { width.toDp() }
-
-        Box(Modifier.onGloballyPositioned { coordinates ->
-            width = coordinates.size.width
-        }) {
-            Text(text = "Информация о записи", style = Typography.headlineMedium)
-        }
-        Divider(
-            color = md_theme_light_primary,
-            thickness = 3.dp,
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .width(widthText)
-        )
     }
 }
 
@@ -209,7 +178,7 @@ private fun CancelButton(
         Button(
             onClick = {
                 openDialog.value = true
-            }, shape = RoundedCornerShape(40)
+            }, shape = RoundedCornerShape(32)
         ) {
             Text(
                 text = "Отменить запись",

@@ -1,6 +1,8 @@
 package com.example.opencontrol
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -10,9 +12,10 @@ import java.time.LocalDate
 import java.util.Random
 
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
-    val viewModelId = Random().nextInt(1000)
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
+
+    var photoUris = mutableStateListOf<Uri>()
 
     fun getAllNotes(): List<Note> {
         return repository.getAllNotes()
