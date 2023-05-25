@@ -20,7 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -28,6 +30,8 @@ import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.example.opencontrol.view.MainScreen
+import com.example.opencontrol.view.userProfileTab.UserProfileScreen
 import timber.log.Timber
 
 class EnterScreen : Screen {
@@ -79,7 +83,28 @@ private fun EnterScreenContent() {
                     .weight(1f),
                     text = "КАК ИНСПЕКТОР")
             }
+            TempTestButton()
         }
+    }
+}
+//TODO Delete this button
+@Composable
+private fun TempTestButton() {
+    val navigator = LocalNavigator.currentOrThrow
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Text(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .clickable {
+                    navigator.push(UserProfileScreen())
+                    Timber.d("@@@ Click to register!")
+                },
+            text = "Дверь разработчика",
+            fontWeight = FontWeight.SemiBold,
+            color = md_theme_light_primary,
+            fontSize = 13.sp,
+            textDecoration = TextDecoration.Underline
+        )
     }
 }
 

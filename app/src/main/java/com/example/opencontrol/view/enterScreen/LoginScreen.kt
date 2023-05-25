@@ -255,6 +255,7 @@ private fun RegisterTextButton() {
         )
     }
 }
+//TODO Delete this button
 @Composable
 private fun TempTestButton() {
     val navigator = LocalNavigator.currentOrThrow

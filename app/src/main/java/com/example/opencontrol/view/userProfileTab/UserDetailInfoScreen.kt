@@ -8,15 +8,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 
-class UserInfoScreen: Screen {
+class UserDetailInfoScreen: Screen {
     @Composable
     override fun Content() {
-        UserInfoScreenContent()
+        UserDetailInfoScreenContent()
     }
 }
 
 @Composable
-private fun UserInfoScreenContent() {
+private fun UserDetailInfoScreenContent() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()

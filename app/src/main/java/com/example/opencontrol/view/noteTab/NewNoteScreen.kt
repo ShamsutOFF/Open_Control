@@ -294,13 +294,13 @@ private fun FreeTimeForRecording(freeTimeForRecording: List<String>) {
     }
     LazyRow() {
         items(freeTimeForRecording) { time ->
-            SelectableTimeCell(time, time == selectedTime) { selectedTime = time }
+            SelectableTimeChip(time, time == selectedTime) { selectedTime = time }
         }
     }
 }
 
 @Composable
-private fun SelectableTimeCell(
+private fun SelectableTimeChip(
     time: String,
     isSelected: Boolean,
     onTimeSelected: (String) -> Unit

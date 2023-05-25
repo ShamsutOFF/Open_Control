@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
                             it.Content()
                         }
                     }
-//                    Navigator(EnterScreen())
                 }
             }
         }

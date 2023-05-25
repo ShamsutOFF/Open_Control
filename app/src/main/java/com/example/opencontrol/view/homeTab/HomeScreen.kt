@@ -23,7 +23,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.R
-import com.example.opencontrol.ui.theme.LightGreyButton
+import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.view.enterScreen.MoscowLogo
 import com.example.opencontrol.view.enterScreen.OpenControlLogo
@@ -58,7 +58,7 @@ private fun HomeScreenContent() {
                     .padding(8.dp)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(12))
-                    .background(LightGreyButton)
+                    .background(LightGrey)
                     .clickable {
                         Timber.d("@@@ Калькулятор нарушений")
 //                        navigator.push(LoginScreen())
@@ -72,7 +72,7 @@ private fun HomeScreenContent() {
                         .padding(8.dp)
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(12))
-                        .background(LightGreyButton)
+                        .background(LightGrey)
                         .clickable {
                             Timber.d("@@@ Ближайшая запись: 18 мая 12:00 департамент...")
 //                        navigator.push(LoginScreen())
