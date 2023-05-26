@@ -7,15 +7,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.opencontrol.domain.MainRepository
+import com.example.opencontrol.model.AnswerNetwork
+import com.example.opencontrol.model.ChatMessage
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.model.QuestionNetwork
 import java.time.LocalDate
-import java.util.Random
 
 class MainViewModel(private val repository: MainRepository) : ViewModel() {
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
 
     var photoUris = mutableStateListOf<Uri>()
+
+    var chatListOfMessages = mutableStateListOf<ChatMessage>()
+
+    fun getAnswerFromChat(question: String): AnswerNetwork {
+        val questionNetwork = QuestionNetwork(id = 12345, question = question, newChat = false)
+        return repository.getAnswerFromChat(questionNetwork)
+    }
 
     fun getAllNotes(): List<Note> {
         return repository.getAllNotes()
