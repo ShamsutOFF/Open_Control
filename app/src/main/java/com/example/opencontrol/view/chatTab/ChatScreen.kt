@@ -29,18 +29,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.ChatMessage
-import com.example.opencontrol.ui.theme.ChatGreenSecondary
 import com.example.opencontrol.ui.theme.ChatGreenPrimary
+import com.example.opencontrol.ui.theme.ChatGreenSecondary
 import com.example.opencontrol.ui.theme.ChatGreyMessage
 import com.example.opencontrol.ui.theme.LightColors
-import com.example.opencontrol.ui.theme.md_theme_light_primary
 import org.koin.androidx.compose.getViewModel
 
 class ChatScreen : Screen {
@@ -117,6 +115,8 @@ fun MessageItem(message: ChatMessage) {
             Text(
                 text = message.content,
                 color = LightColors.onPrimary,
+//                fontWeight = FontWeight.SemiBold,
+//                fontSize = 13.sp,
                 modifier = Modifier
                     .background(
                         color = ChatGreenPrimary,
@@ -127,6 +127,8 @@ fun MessageItem(message: ChatMessage) {
         } else {
             Text(
                 text = message.content,
+//                fontWeight = FontWeight.SemiBold,
+//                fontSize = 13.sp,
                 modifier = Modifier
                     .background(
                         color = ChatGreyMessage,
@@ -139,7 +141,7 @@ fun MessageItem(message: ChatMessage) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SendMessageBar(onSendMessage: (ChatMessage) -> Unit) {
     var messageText by remember { mutableStateOf("") }
@@ -171,8 +173,7 @@ fun SendMessageBar(onSendMessage: (ChatMessage) -> Unit) {
                 IconButton(
                     onClick = {
                         onSendMessage(ChatMessage(messageText, true))
-                        val answer = viewModel.getAnswerFromChat(messageText)
-                        onSendMessage(ChatMessage(answer.answer, false))
+                        viewModel.getAnswerFromChat(messageText)
                         messageText = ""
                     },
                     enabled = messageText.isNotBlank()

@@ -3,6 +3,7 @@ package com.example.opencontrol.domain
 import com.example.opencontrol.model.AnswerNetwork
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.QuestionNetwork
+import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
     fun getAllNotes(): List<Note>
@@ -21,6 +22,6 @@ interface MainRepository {
 
     fun getFreeTimeForRecording(count: Int): List<String>
 
-    fun getAnswerFromChat(question: QuestionNetwork): AnswerNetwork
+    fun getAnswerFromChat(question: QuestionNetwork): Flow<AnswerNetwork>
 
 }

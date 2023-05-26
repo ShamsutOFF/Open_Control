@@ -1,15 +1,15 @@
 package com.example.opencontrol.domain
 
-import com.example.opencontrol.model.AnswerNetwork
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
 import com.example.opencontrol.model.QuestionNetwork
+import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 
-class LocalMainRepositoryImpl(private val api: MyApi) : MainRepository {
+class OnlineMainRepositoryImpl(private val api: MyApi) : MainRepository {
 
     override fun getAllNotes(): List<Note> {
         return notes
@@ -63,9 +63,9 @@ class LocalMainRepositoryImpl(private val api: MyApi) : MainRepository {
         return listOfTime.sorted()
     }
 
-    override fun getAnswerFromChat(question: QuestionNetwork): AnswerNetwork {
+    override fun getAnswerFromChat(question: QuestionNetwork) = flow {
         Timber.d("@@@ getAnswerFromChat question = $question")
-        return AnswerNetwork("Какой то ответ чат бота", true)
+        emit(api.getAnswerFromBot(question))
     }
 
     private val firstNames =
@@ -83,11 +83,6 @@ class LocalMainRepositoryImpl(private val api: MyApi) : MainRepository {
     )
 
     private fun generateRandomPerson(): Person {
-
-        val firstName = firstNames.random()
-        val lastName = lastNames.random()
-        val patronymic = patronymics.random()
-//        return "$lastName $firstName $patronymic"
         return Person(firstNames.random(), lastNames.random(), patronymics.random())
     }
 
