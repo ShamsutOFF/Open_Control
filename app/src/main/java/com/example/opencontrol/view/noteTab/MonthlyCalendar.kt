@@ -72,8 +72,7 @@ fun MonthlyCalendar(
             .map { it - Int.MAX_VALUE / 2 }
             .collect { monthOffset = it }
     }
-    MonthSelector(monthOffset, monthTitle, yearTitle) {
-            offset ->
+    MonthSelector(monthOffset, monthTitle, yearTitle) { offset ->
         monthOffset = offset
     }
 
@@ -109,7 +108,10 @@ private fun MonthSelector(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { onMonthOffsetChanged(monthOffset - 1) }, modifier = Modifier.weight(1f)) {
+        IconButton(
+            onClick = { onMonthOffsetChanged(monthOffset - 1) },
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(Icons.Filled.KeyboardArrowLeft, null)
         }
 
@@ -120,7 +122,10 @@ private fun MonthSelector(
             modifier = Modifier.weight(1f)
         )
 
-        IconButton(onClick = { onMonthOffsetChanged(monthOffset + 1) }, modifier = Modifier.weight(1f)) {
+        IconButton(
+            onClick = { onMonthOffsetChanged(monthOffset + 1) },
+            modifier = Modifier.weight(1f)
+        ) {
             Icon(Icons.Filled.KeyboardArrowRight, null)
         }
     }

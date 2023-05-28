@@ -38,8 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateBackground
-import com.example.opencontrol.ui.theme.WeeklyCalendarSelectedDateText
+import com.example.opencontrol.ui.theme.LightColors
 import kotlinx.coroutines.flow.map
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -96,7 +95,9 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
             }
         }
     }
-
+    LaunchedEffect(weekOffset) {
+        pagerState.animateScrollToPage(weekOffset + Int.MAX_VALUE / 2)
+    }
     Text(
         text = "$dayOfWeek ($formattedDate)",
         modifier = Modifier.padding(8.dp),
@@ -146,7 +147,7 @@ private fun WeekSelector(
 @Composable
 private fun WeeklyCalendarDayCell(date: LocalDate, isSelected: Boolean, onDateSelected: (LocalDate) -> Unit) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    val cellWidth = (screenWidthDp - 112.dp) / 7
+    val cellWidth = (screenWidthDp) / 10
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -155,7 +156,7 @@ private fun WeeklyCalendarDayCell(date: LocalDate, isSelected: Boolean, onDateSe
             .clip(RoundedCornerShape(50))
             .background(
                 when {
-                    isSelected -> WeeklyCalendarSelectedDateBackground
+                    isSelected -> LightColors.primary.copy(alpha = 0.17f)
                     else -> Color.Transparent
                 }
             )
@@ -168,13 +169,13 @@ private fun WeeklyCalendarDayCell(date: LocalDate, isSelected: Boolean, onDateSe
             Text(
                 text = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
                 fontWeight = FontWeight.Bold,
-                color = if (isSelected) WeeklyCalendarSelectedDateText else Color.Unspecified
+                color = if (isSelected) LightColors.primary else Color.Unspecified
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = date.dayOfMonth.toString(),
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                color = if (isSelected) WeeklyCalendarSelectedDateText else Color.Unspecified
+                color = if (isSelected) LightColors.primary else Color.Unspecified
             )
         }
     }

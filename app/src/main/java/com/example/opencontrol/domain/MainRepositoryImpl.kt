@@ -1,15 +1,18 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.Kno
+import com.example.opencontrol.model.ListKno
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
 import com.example.opencontrol.model.QuestionNetwork
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 
-class OnlineMainRepositoryImpl(private val api: MyApi) : MainRepository {
+class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: BaseApi) : MainRepository {
 
     override fun getAllNotes(): List<Note> {
         return notes
@@ -65,7 +68,11 @@ class OnlineMainRepositoryImpl(private val api: MyApi) : MainRepository {
 
     override fun getAnswerFromChat(question: QuestionNetwork) = flow {
         Timber.d("@@@ getAnswerFromChat question = $question")
-        emit(api.getAnswerFromBot(question))
+        emit(chatApi.getAnswerFromBot(question))
+    }
+
+    override fun getKnos(): Flow<ListKno> = flow {
+        emit(baseApi.getKnos())
     }
 
     private val firstNames =

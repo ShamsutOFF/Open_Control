@@ -1,7 +1,5 @@
 package com.example.opencontrol.view.noteTab
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -22,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +34,7 @@ import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyDivider
-import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
+import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.chatTab.VideoScreen
 import org.koin.androidx.compose.getViewModel
@@ -72,35 +72,26 @@ private fun NoteInfoContent(noteId: String) {
 @Composable
 private fun VideoBlock() {
     val navigator = LocalNavigator.currentOrThrow
-    Column(
+    Button(
+        onClick = { navigator.push(VideoScreen("roomName")) },
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 20.dp, horizontal = 16.dp)
-            .background(color = md_theme_light_inversePrimary, shape = RoundedCornerShape(16.dp))
-
+            .padding(vertical = 20.dp, horizontal = 16.dp),
+        shape = RoundedCornerShape(32),
+        colors = ButtonDefaults.buttonColors(containerColor = LightGrey, contentColor = Color.Black)
     ) {
-        Row(
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.video_icon),
+            contentDescription = "",
+            modifier = Modifier.size(30.dp)
+        )
+        Text(
+            text = "Начать консультирование",
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp).clickable{
-                    navigator.push(VideoScreen("roomName"))
-                },
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.video_icon),
-                contentDescription = "",
-                modifier = Modifier.size(30.dp)
-            )
-            Text(
-                text = "Начать консультирование",
-                modifier = Modifier
-                    .padding(8.dp),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium
-            )
-        }
+                .padding(8.dp),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium
+        )
     }
 }
 
@@ -122,7 +113,10 @@ private fun NoteInfoBlock(note: Note) {
         InfoBlockDivider()
         FieldInfoRow("Номер объекта:", note.objectNumber)
         InfoBlockDivider()
-        FieldInfoRow("Инспектор:", note.inspectorFIO.lastName + " " + note.inspectorFIO.firstName + " " + note.inspectorFIO.patronymic)
+        FieldInfoRow(
+            "Инспектор:",
+            note.inspectorFIO.lastName + " " + note.inspectorFIO.firstName + " " + note.inspectorFIO.patronymic
+        )
         InfoBlockDivider()
         FieldInfoRow("Дополнительно:", note.info)
     }

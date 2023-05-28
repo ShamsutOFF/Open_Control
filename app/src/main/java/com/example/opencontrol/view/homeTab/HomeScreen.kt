@@ -26,13 +26,17 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.OrangeBackground
-import com.example.opencontrol.ui.theme.TestGreen
 import com.example.opencontrol.view.enterScreen.MoscowLogo
 import com.example.opencontrol.view.enterScreen.OpenControlLogo
+import com.example.opencontrol.view.noteTab.NoteInfoScreen
+import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class HomeScreen : Screen {
     @Composable
@@ -44,6 +48,7 @@ class HomeScreen : Screen {
 @Composable
 private fun HomeScreenContent() {
     val navigator = LocalNavigator.currentOrThrow
+    val viewModel = getViewModel<MainViewModel>()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,16 +77,21 @@ private fun HomeScreenContent() {
                         .weight(1f),
                         text = "Калькулятор нарушений",
                         icon = R.drawable.calculator_icon)
-
-                    WidgetButton(text = "Ближайшая запись: 18 мая 12:00 департамент...",
+                    val nearestNote = viewModel.getNearestNote()
+                    val formatter = DateTimeFormatter.ofPattern("dd MMMM", Locale("ru"))
+                    Timber.d("@@@ nearestNote = $nearestNote")
+                    val text = if (nearestNote != null)
+                        "Ближайшая запись: ${nearestNote.date.format(formatter)} ${nearestNote.time}"
+                    else "Нет ближайших записей"
+                    WidgetButton(text = text,
                         modifier = Modifier
                             .padding(8.dp)
                             .aspectRatio(1f)
                             .clip(RoundedCornerShape(12))
                             .background(LightGrey)
                             .clickable {
-                                Timber.d("@@@ Ближайшая запись: 18 мая 12:00 департамент...")
-//                        navigator.push(LoginScreen())
+                                if (nearestNote != null)
+                                navigator.push(NoteInfoScreen(nearestNote.id))
                             }
                             .weight(1f),
                         icon = R.drawable.calendar_icon)

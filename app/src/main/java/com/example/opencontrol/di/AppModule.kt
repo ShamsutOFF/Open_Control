@@ -1,9 +1,10 @@
 package com.example.opencontrol.di
 
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.domain.BaseApi
+import com.example.opencontrol.domain.ChatApi
 import com.example.opencontrol.domain.MainRepository
-import com.example.opencontrol.domain.MyApi
-import com.example.opencontrol.domain.OnlineMainRepositoryImpl
+import com.example.opencontrol.domain.MainRepositoryImpl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -25,11 +26,33 @@ val appModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-            .create(MyApi::class.java)
     }
+
+    single<ChatApi> {
+        val retrofit = get<Retrofit>()
+        retrofit.create(ChatApi::class.java)
+    }
+
+    single<BaseApi> {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
+        val client = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .build()
+
+        Retrofit.Builder()
+            .baseUrl("http://178.170.195.121:5000")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(BaseApi::class.java)
+    }
+
     single<MainRepository> {
-        OnlineMainRepositoryImpl(get())
+        MainRepositoryImpl(get(), get())
     }
+
     single { MainViewModel(get()) }
-//    viewModel { MainViewModel(get()) }
 }
