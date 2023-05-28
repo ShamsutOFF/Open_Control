@@ -116,7 +116,6 @@ private fun NewNoteContent() {
                     Timber.d("@@@ selected = $it")
                 }
             }
-            item { ToggleItem("Выберите тип встречи") }
             item {
                 EnterInfoItemBlock(
                     "Дополнительная информация",
@@ -128,68 +127,6 @@ private fun NewNoteContent() {
             item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
             item { NoteButton() }
         }
-    }
-}
-
-@Composable
-private fun ToggleItem(title: String) {
-    var selectedItem by remember {
-        mutableStateOf("")
-    }
-    val firstButtonText = "ВИДЕО-КОНФЕРЕНЦИЯ"
-    val secondButtonText = "ЛИЧНЫЙ ВИЗИТ"
-    Column(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-    ) {
-        Text(text = title, fontSize = 14.sp)
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ToggleButton(firstButtonText, selectedItem == firstButtonText) { selectedItem = it }
-            ToggleButton(secondButtonText, selectedItem == secondButtonText) { selectedItem = it }
-        }
-    }
-}
-
-
-@Composable
-private fun ToggleButton(
-    text: String,
-    isSelected: Boolean,
-    onTextSelected: (String) -> Unit
-) {
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
-    val cellWidth = (screenWidthDp - 16.dp) / 2
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .padding(4.dp)
-            .clip(RoundedCornerShape(32))
-            .width(cellWidth)
-            .height(40.dp)
-            .background(
-                when {
-                    isSelected -> LightColors.primary
-                    else -> Color.Transparent
-                }
-            )
-            .border(
-                width = when {
-                    isSelected -> 0.dp
-                    else -> 1.dp
-                }, color = when {
-                    isSelected -> Color.Transparent
-                    else -> LightGreyBorder
-                }, shape = RoundedCornerShape(32)
-            )
-            .clickable { onTextSelected(text) }
-    ) {
-        Text(
-            text = text,
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            color = if (isSelected) LightColors.onPrimary else GreyText
-        )
     }
 }
 

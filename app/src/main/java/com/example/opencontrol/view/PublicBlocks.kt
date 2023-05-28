@@ -1,5 +1,8 @@
 package com.example.opencontrol.view
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -40,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.GreyCancelButton
 import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
+import com.example.opencontrol.ui.theme.LightGreyBorder
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 
@@ -205,6 +212,67 @@ private fun NegativeButton(text: String, modifier: Modifier, onClick: () -> Unit
                 .padding(8.dp),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold
+        )
+    }
+}
+@Composable
+private fun ToggleItem(title: String) {
+    var selectedItem by remember {
+        mutableStateOf("")
+    }
+    val firstButtonText = "ВИДЕО-КОНФЕРЕНЦИЯ"
+    val secondButtonText = "ЛИЧНЫЙ ВИЗИТ"
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        Text(text = title, fontSize = 14.sp)
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ToggleButton(firstButtonText, selectedItem == firstButtonText) { selectedItem = it }
+            ToggleButton(secondButtonText, selectedItem == secondButtonText) { selectedItem = it }
+        }
+    }
+}
+
+
+@Composable
+private fun ToggleButton(
+    text: String,
+    isSelected: Boolean,
+    onTextSelected: (String) -> Unit
+) {
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
+    val cellWidth = (screenWidthDp - 16.dp) / 2
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .padding(4.dp)
+            .clip(RoundedCornerShape(32))
+            .width(cellWidth)
+            .height(40.dp)
+            .background(
+                when {
+                    isSelected -> LightColors.primary
+                    else -> Color.Transparent
+                }
+            )
+            .border(
+                width = when {
+                    isSelected -> 0.dp
+                    else -> 1.dp
+                }, color = when {
+                    isSelected -> Color.Transparent
+                    else -> LightGreyBorder
+                }, shape = RoundedCornerShape(32)
+            )
+            .clickable { onTextSelected(text) }
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.sp,
+            color = if (isSelected) LightColors.onPrimary else GreyText
         )
     }
 }
