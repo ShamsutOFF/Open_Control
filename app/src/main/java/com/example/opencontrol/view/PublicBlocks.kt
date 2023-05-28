@@ -71,10 +71,11 @@ fun HeaderBlock(title: String) {
 fun SelectableItemBlock(
     title: String,
     values: List<String>,
+    selectedText: String,
     selected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
+//    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -89,7 +90,7 @@ fun SelectableItemBlock(
             onClick = { expanded = true },
             colors = ButtonDefaults.outlinedButtonColors(contentColor = GreyText)
         ) {
-            Text(text = selectedOption)
+            Text(text = selectedText)
         }
         DropdownMenu(
             expanded = expanded,
@@ -100,7 +101,6 @@ fun SelectableItemBlock(
                 DropdownMenuItem(
                     text = { Text(text = it) },
                     onClick = {
-                        selectedOption = it
                         selected(it)
                         expanded = false
                     })

@@ -60,7 +60,7 @@ private fun AddBusinessScreenContent() {
                         "Тип цифрового профиля объекта 2",
                         "Тип цифрового профиля объекта 3"
                     )
-                ) {
+                ,"нажмите для выбора") {
                     Timber.d("@@@ selected = $it")
                 }
             }
@@ -73,7 +73,7 @@ private fun AddBusinessScreenContent() {
                         "Классификация объекта 2",
                         "Классификация объекта 3"
                     )
-                ) {
+                ,"нажмите для выбора") {
                     Timber.d("@@@ selected = $it")
                 }
             }

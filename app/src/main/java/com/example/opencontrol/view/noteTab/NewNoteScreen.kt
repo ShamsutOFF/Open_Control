@@ -76,13 +76,16 @@ private fun NewNoteContent() {
         it.name
     }
     var selectedKno by remember {
-        mutableStateOf("")
+        mutableStateOf("нажмите для выбора")
+    }
+    var selectedMeasure by remember {
+        mutableStateOf("нажмите для выбора")
     }
     LaunchedEffect(key1 = selectedKno) {
         val kno = viewModel.getKnoByName(selectedKno)
         if (kno != null)
             viewModel.getMeasuresForKno(kno.id.toString())
-        Timber.d("@@@ measuresForKno = $measuresForKno")
+        selectedMeasure = "нажмите для выбора"
     }
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
@@ -95,18 +98,18 @@ private fun NewNoteContent() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                SelectableItemBlock("Kонтрольно-надзорный орган", knosNames) {
+                SelectableItemBlock("Kонтрольно-надзорный орган", knosNames, selectedKno) {
                     Timber.d("@@@ selected = $it")
                     selectedKno = it
                 }
             }
             item {
-                SelectableItemBlock("Вид контроля", measuresForKno) {
-                    Timber.d("@@@ selected = $it")
+                SelectableItemBlock("Вид контроля", measuresForKno, selectedMeasure) {
+                    selectedMeasure = it
                 }
             }
             item {
-                SelectableItemBlock("Подразделение", viewModel.getDepartments()) {
+                SelectableItemBlock("Подразделение", viewModel.getDepartments(), "нажмите для выбора") {
                     Timber.d("@@@ selected = $it")
                 }
             }
