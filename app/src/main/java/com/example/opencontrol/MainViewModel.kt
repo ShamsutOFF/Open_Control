@@ -11,6 +11,7 @@ import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.model.ChatMessage
 import com.example.opencontrol.model.Kno
 import com.example.opencontrol.model.KnoDao
+import com.example.opencontrol.model.Measures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.QuestionNetwork
 import kotlinx.coroutines.Dispatchers
@@ -34,12 +35,17 @@ class MainViewModel(
 
     var chatListOfMessages = mutableStateListOf<ChatMessage>()
     var listOfAllKnos = mutableStateListOf<Kno>()
+    var measuresForKno = mutableStateListOf<Measures>()
 
     init {
         Timber.d("@@@ init")
         chatListOfMessages.add(ChatMessage("Здравствуйте! Я бот-помощник. Чем могу помочь?", false))
         downloadKnosToDatabase()
         getKnosFromRoom()
+    }
+
+    suspend fun getKnoByName(name: String): Kno?{
+        return knoDao.getKnoByName(name)
     }
 
     private fun downloadKnosToDatabase() {
@@ -57,7 +63,7 @@ class MainViewModel(
         }
     }
 
-    fun getKnosFromRoom() {
+    private fun getKnosFromRoom() {
         viewModelScope.launch {
             knoDao.getAllKno()
                 .flowOn(Dispatchers.IO)
@@ -68,6 +74,21 @@ class MainViewModel(
                     listOfAllKnos.addAll(it)
                 }
         }
+    }
+
+    fun getMeasuresForKno(knoId: String){
+        viewModelScope.launch {
+            repository.getMeasuresForKno(knoId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect{
+                    measuresForKno.clear()
+                    measuresForKno.addAll(it.measuresList)
+                }
+        }
+
     }
 
     fun getAnswerFromChat(question: String) {

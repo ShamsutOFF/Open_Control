@@ -60,7 +60,9 @@ private fun AddBusinessScreenContent() {
                         "Тип цифрового профиля объекта 2",
                         "Тип цифрового профиля объекта 3"
                     )
-                )
+                ) {
+                    Timber.d("@@@ selected = $it")
+                }
             }
             item { EnterInfoItemBlock("Вид деятельности", "Введите вид деятельности") }
             item {
@@ -71,7 +73,9 @@ private fun AddBusinessScreenContent() {
                         "Классификация объекта 2",
                         "Классификация объекта 3"
                     )
-                )
+                ) {
+                    Timber.d("@@@ selected = $it")
+                }
             }
             item {
                 EnterInfoItemBlock(

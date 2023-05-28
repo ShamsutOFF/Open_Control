@@ -19,4 +19,7 @@ interface KnoDao {
 
     @Query("SELECT * FROM Kno WHERE id = :knoId")
     fun getKnoById(knoId: Int): Flow<Kno?>
+
+    @Query("SELECT * FROM Kno WHERE name = :knoName")
+    suspend fun getKnoByName(knoName: String): Kno?
 }

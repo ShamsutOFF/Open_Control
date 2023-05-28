@@ -25,32 +25,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
@@ -78,6 +72,18 @@ private fun NewNoteContent() {
     val knosNames = viewModel.listOfAllKnos.map {
         it.name
     }
+    val measuresForKno = viewModel.measuresForKno.map {
+        it.name
+    }
+    var selectedKno by remember {
+        mutableStateOf("")
+    }
+    LaunchedEffect(key1 = selectedKno) {
+        val kno = viewModel.getKnoByName(selectedKno)
+        if (kno != null)
+            viewModel.getMeasuresForKno(kno.id.toString())
+        Timber.d("@@@ measuresForKno = $measuresForKno")
+    }
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,11 +94,29 @@ private fun NewNoteContent() {
                 .padding(horizontal = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { SelectableItemBlock("Kонтрольно-надзорный орган", knosNames) }
-            item { SelectableItemBlock("Вид контроля", viewModel.getControlTypes()) }
-            item { SelectableItemBlock("Подразделение", viewModel.getDepartments()) }
+            item {
+                SelectableItemBlock("Kонтрольно-надзорный орган", knosNames) {
+                    Timber.d("@@@ selected = $it")
+                    selectedKno = it
+                }
+            }
+            item {
+                SelectableItemBlock("Вид контроля", measuresForKno) {
+                    Timber.d("@@@ selected = $it")
+                }
+            }
+            item {
+                SelectableItemBlock("Подразделение", viewModel.getDepartments()) {
+                    Timber.d("@@@ selected = $it")
+                }
+            }
             item { ToggleItem("Выберите тип встречи") }
-            item { EnterInfoItemBlock("Дополнительная информация", "Введите комментарий к проверке") }
+            item {
+                EnterInfoItemBlock(
+                    "Дополнительная информация",
+                    "Введите комментарий к проверке"
+                )
+            }
             item { AddPhotoItem() }
             item { WeeklyCalendar(viewModel.selectedDate, { }) }
             item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
@@ -162,36 +186,6 @@ private fun ToggleButton(
         )
     }
 }
-
-//@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-//@Composable
-//private fun ExtraInfoItem(title: String) {
-//    var extraText by remember {
-//        mutableStateOf("")
-//    }
-//    val keyboardController = LocalSoftwareKeyboardController.current
-//    val focusManager = LocalFocusManager.current
-//    Column(
-//        modifier = Modifier
-//            .padding(8.dp)
-//            .fillMaxWidth()
-//    ) {
-//        Text(text = title, fontSize = 14.sp)
-//        OutlinedTextField(
-//            value = extraText,
-//            label = { Text(text = "Комментарий к проверке") },
-//            onValueChange = { extraText = it },
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            shape = RoundedCornerShape(32),
-//            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-//            keyboardActions = KeyboardActions(onDone = {
-//                keyboardController?.hide()
-//                focusManager.clearFocus()
-//            })
-//        )
-//    }
-//}
 
 @Composable
 private fun AddPhotoItem() {

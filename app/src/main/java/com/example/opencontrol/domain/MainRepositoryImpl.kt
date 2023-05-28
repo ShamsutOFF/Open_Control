@@ -1,7 +1,7 @@
 package com.example.opencontrol.domain
 
-import com.example.opencontrol.model.Kno
 import com.example.opencontrol.model.ListKno
+import com.example.opencontrol.model.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
 import com.example.opencontrol.model.QuestionNetwork
@@ -73,6 +73,10 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
 
     override fun getKnos(): Flow<ListKno> = flow {
         emit(baseApi.getKnos())
+    }
+
+    override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow{
+        emit(baseApi.getMeasures(knoId))
     }
 
     private val firstNames =

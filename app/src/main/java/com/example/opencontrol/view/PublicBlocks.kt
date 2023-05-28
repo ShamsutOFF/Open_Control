@@ -68,7 +68,11 @@ fun HeaderBlock(title: String) {
 }
 
 @Composable
-fun SelectableItemBlock(title: String, values: List<String>) {
+fun SelectableItemBlock(
+    title: String,
+    values: List<String>,
+    selected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("нажмите для выбора") }
     Column(
@@ -93,10 +97,13 @@ fun SelectableItemBlock(title: String, values: List<String>) {
             modifier = Modifier.fillMaxWidth()
         ) {
             values.forEachIndexed { index, it ->
-                DropdownMenuItem(text = { Text(text = it) }, onClick = {
-                    selectedOption = it
-                    expanded = false
-                })
+                DropdownMenuItem(
+                    text = { Text(text = it) },
+                    onClick = {
+                        selectedOption = it
+                        selected(it)
+                        expanded = false
+                    })
                 if (index != values.size - 1) Divider()
             }
         }
