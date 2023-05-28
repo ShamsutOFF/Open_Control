@@ -224,7 +224,7 @@ fun DayView(
             text = date.dayOfMonth.toString(),
             color = when {
                 isSelected -> LightColors.onPrimary
-                isToday -> MaterialTheme.colors.primary
+                isToday -> LightColors.primary
                 else -> MaterialTheme.colors.onSurface
             },
             fontSize = 14.sp,

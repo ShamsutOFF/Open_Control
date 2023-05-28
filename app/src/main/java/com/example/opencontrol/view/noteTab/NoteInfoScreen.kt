@@ -36,7 +36,7 @@ import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyDivider
 import com.example.opencontrol.ui.theme.md_theme_light_inversePrimary
 import com.example.opencontrol.view.HeaderBlock
-import com.example.opencontrol.view.chatTab.VideoRoomScreen
+import com.example.opencontrol.view.chatTab.VideoScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
@@ -83,7 +83,7 @@ private fun VideoBlock() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp).clickable{
-                    navigator.push(VideoRoomScreen())
+                    navigator.push(VideoScreen("roomName"))
                 },
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically

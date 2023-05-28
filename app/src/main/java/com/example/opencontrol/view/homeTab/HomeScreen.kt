@@ -10,12 +10,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,11 +29,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.OrangeBackground
+import com.example.opencontrol.ui.theme.TestGreen
 import com.example.opencontrol.view.enterScreen.MoscowLogo
 import com.example.opencontrol.view.enterScreen.OpenControlLogo
 import timber.log.Timber
 
-class HomeScreen: Screen{
+class HomeScreen : Screen {
     @Composable
     override fun Content() {
         HomeScreenContent()
@@ -44,43 +49,45 @@ private fun HomeScreenContent() {
             .fillMaxSize()
     ) {
         OpenControlLogo()
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(OrangeBackground)
         ) {
-            MoscowLogo()
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp, vertical = 16.dp)
-            ) {
-                WidgetButton(modifier = Modifier
-                    .padding(8.dp)
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(12))
-                    .background(LightGrey)
-                    .clickable {
-                        Timber.d("@@@ Калькулятор нарушений")
-//                        navigator.push(LoginScreen())
-                    }
-                    .weight(1f),
-                    text = "Калькулятор нарушений",
-                    icon = R.drawable.calculator_icon)
-
-                WidgetButton(text = "Ближайшая запись: 18 мая 12:00 департамент...",
+            item { MoscowLogo() }
+            item {
+                Row(
                     modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 16.dp)
+                ) {
+                    WidgetButton(modifier = Modifier
                         .padding(8.dp)
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(12))
                         .background(LightGrey)
                         .clickable {
-                            Timber.d("@@@ Ближайшая запись: 18 мая 12:00 департамент...")
+                            Timber.d("@@@ Калькулятор нарушений")
 //                        navigator.push(LoginScreen())
                         }
                         .weight(1f),
-                    icon = R.drawable.calendar_icon)
+                        text = "Калькулятор нарушений",
+                        icon = R.drawable.calculator_icon)
+
+                    WidgetButton(text = "Ближайшая запись: 18 мая 12:00 департамент...",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .aspectRatio(1f)
+                            .clip(RoundedCornerShape(12))
+                            .background(LightGrey)
+                            .clickable {
+                                Timber.d("@@@ Ближайшая запись: 18 мая 12:00 департамент...")
+//                        navigator.push(LoginScreen())
+                            }
+                            .weight(1f),
+                        icon = R.drawable.calendar_icon)
+                }
             }
-            Banner()
+            item { Banner() }
         }
     }
 }
@@ -107,6 +114,7 @@ private fun WidgetButton(text: String, modifier: Modifier, icon: Int) {
 
 @Composable
 private fun Banner() {
+    val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -127,6 +135,8 @@ private fun Banner() {
         Image(
             painter = painterResource(id = R.drawable.person_sergey_1),
             contentDescription = "", modifier = Modifier
+                .width(screenWidthDp - 16.dp)
+                .height(screenWidthDp - 16.dp)
                 .fillMaxSize()
                 .padding(8.dp)
         )
