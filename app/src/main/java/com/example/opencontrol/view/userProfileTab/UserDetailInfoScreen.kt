@@ -14,7 +14,7 @@ import com.example.opencontrol.view.HeaderBlock
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-class UserDetailInfoScreen: Screen {
+class UserDetailInfoScreen : Screen {
     @Composable
     override fun Content() {
         UserDetailInfoScreenContent()

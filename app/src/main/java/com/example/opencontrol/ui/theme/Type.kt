@@ -21,7 +21,6 @@ val monrope = FontFamily(
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = monrope,
-//        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
@@ -29,7 +28,6 @@ val Typography = Typography(
     ),
     titleLarge = TextStyle(
         fontFamily = monrope,
-//        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 22.sp,
         lineHeight = 28.sp,
@@ -37,7 +35,6 @@ val Typography = Typography(
     ),
     labelSmall = TextStyle(
         fontFamily = monrope,
-//        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,

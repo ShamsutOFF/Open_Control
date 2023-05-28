@@ -145,7 +145,11 @@ private fun WeekSelector(
 }
 
 @Composable
-private fun WeeklyCalendarDayCell(date: LocalDate, isSelected: Boolean, onDateSelected: (LocalDate) -> Unit) {
+private fun WeeklyCalendarDayCell(
+    date: LocalDate,
+    isSelected: Boolean,
+    onDateSelected: (LocalDate) -> Unit
+) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     val cellWidth = (screenWidthDp) / 10
     Box(

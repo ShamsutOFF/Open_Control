@@ -55,7 +55,6 @@ import com.example.opencontrol.view.MainScreen
 import timber.log.Timber
 
 class LoginScreen : Screen {
-
     @Composable
     override fun Content() {
         LoginScreenContent()
@@ -255,6 +254,7 @@ private fun RegisterTextButton() {
         )
     }
 }
+
 //TODO Delete this button
 @Composable
 private fun TempTestButton() {

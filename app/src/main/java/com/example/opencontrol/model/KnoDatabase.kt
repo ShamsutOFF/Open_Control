@@ -5,5 +5,5 @@ import androidx.room.RoomDatabase
 
 @Database(entities = [Kno::class], version = 1)
 abstract class KnoDatabase : RoomDatabase() {
-        abstract fun knoDao(): KnoDao
+    abstract fun knoDao(): KnoDao
 }

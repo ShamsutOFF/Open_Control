@@ -17,7 +17,7 @@ object ChatTab : Tab {
         @Composable
         get() {
             val title = "Chat"
-            val icon = rememberVectorPainter (ImageVector.vectorResource(R.drawable.chat_icon))
+            val icon = rememberVectorPainter(ImageVector.vectorResource(R.drawable.chat_icon))
             return remember {
                 TabOptions(
                     index = 0u,

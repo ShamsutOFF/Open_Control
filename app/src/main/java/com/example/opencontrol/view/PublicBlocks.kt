@@ -3,6 +3,7 @@ package com.example.opencontrol.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,7 +42,6 @@ import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.Typography
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import timber.log.Timber
 
 @Composable
 fun HeaderBlock(title: String) {
@@ -75,7 +75,6 @@ fun SelectableItemBlock(
     selected: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-//    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
     Column(
         modifier = Modifier
             .padding(8.dp)
@@ -99,6 +98,9 @@ fun SelectableItemBlock(
         ) {
             values.forEachIndexed { index, it ->
                 DropdownMenuItem(
+                    contentPadding = PaddingValues(4.dp),
+                    modifier = Modifier
+                        .padding(4.dp),
                     text = { Text(text = it) },
                     onClick = {
                         selected(it)

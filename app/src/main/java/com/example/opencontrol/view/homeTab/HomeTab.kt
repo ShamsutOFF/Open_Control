@@ -31,7 +31,6 @@ object HomeTab : Tab {
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
     override fun Content() {
-//        HomeTabContent()
         Navigator(screen = HomeScreen()) { navigator ->
             SlideTransition(navigator = navigator) {
                 it.Content()

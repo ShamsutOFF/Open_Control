@@ -31,9 +31,11 @@ object MainScreen : Screen {
         TabNavigator(HomeTab) {
             Scaffold(
                 content = {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(it)
+                    ) {
                         CurrentTab()
                     }
                 },

@@ -51,7 +51,7 @@ import com.example.opencontrol.ui.theme.OrangeMainTransparent73
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import timber.log.Timber
 
-class RegistrationScreen :Screen {
+class RegistrationScreen : Screen {
     @Composable
     override fun Content() {
         RegistrationScreenContent()
@@ -191,7 +191,8 @@ private fun HaveAccountTextButton() {
                 .padding(vertical = 16.dp)
                 .clickable {
                     navigator.push(LoginScreen())
-                    Timber.d("@@@ Click to Уже есть аккаунт?") },
+                    Timber.d("@@@ Click to Уже есть аккаунт?")
+                },
             text = "Уже есть аккаунт?",
             fontWeight = FontWeight.SemiBold,
             color = md_theme_light_primary,

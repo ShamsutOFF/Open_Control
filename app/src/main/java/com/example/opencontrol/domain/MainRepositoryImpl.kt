@@ -12,7 +12,8 @@ import java.time.LocalDate
 import java.util.UUID
 import kotlin.random.Random
 
-class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: BaseApi) : MainRepository {
+class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: BaseApi) :
+    MainRepository {
 
     override fun getAllNotes(): List<Note> {
         return notes
@@ -75,7 +76,7 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
         emit(baseApi.getKnos())
     }
 
-    override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow{
+    override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow {
         emit(baseApi.getMeasures(knoId))
     }
 
@@ -123,7 +124,7 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
             "empty",
             "empty",
             LocalDate.now(),
-            Person("noName","noName","noName"),
+            Person("noName", "noName", "noName"),
             "empty",
             "empty",
             "empty"

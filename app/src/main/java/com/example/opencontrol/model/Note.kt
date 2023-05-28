@@ -8,7 +8,7 @@ data class Note(
     val time: String,
     val date: LocalDate,
     val inspectorFIO: Person,
-    val format:String,
+    val format: String,
     val objectNumber: String,
     val info: String
 )

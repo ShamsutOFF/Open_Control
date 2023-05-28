@@ -115,8 +115,6 @@ fun MessageItem(message: ChatMessage) {
             Text(
                 text = message.content,
                 color = LightColors.onPrimary,
-//                fontWeight = FontWeight.SemiBold,
-//                fontSize = 13.sp,
                 modifier = Modifier
                     .background(
                         color = ChatGreenPrimary,
@@ -127,8 +125,6 @@ fun MessageItem(message: ChatMessage) {
         } else {
             Text(
                 text = message.content,
-//                fontWeight = FontWeight.SemiBold,
-//                fontSize = 13.sp,
                 modifier = Modifier
                     .background(
                         color = ChatGreyMessage,

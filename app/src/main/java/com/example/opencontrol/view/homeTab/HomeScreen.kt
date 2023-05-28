@@ -72,7 +72,6 @@ private fun HomeScreenContent() {
                         .background(LightGrey)
                         .clickable {
                             Timber.d("@@@ Калькулятор нарушений")
-//                        navigator.push(LoginScreen())
                         }
                         .weight(1f),
                         text = "Калькулятор нарушений",
@@ -91,7 +90,7 @@ private fun HomeScreenContent() {
                             .background(LightGrey)
                             .clickable {
                                 if (nearestNote != null)
-                                navigator.push(NoteInfoScreen(nearestNote.id))
+                                    navigator.push(NoteInfoScreen(nearestNote.id))
                             }
                             .weight(1f),
                         icon = R.drawable.calendar_icon)

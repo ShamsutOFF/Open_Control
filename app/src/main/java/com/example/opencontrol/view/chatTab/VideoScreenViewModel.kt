@@ -4,7 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
-class VideoScreenViewModel: ViewModel() {
+class VideoScreenViewModel : ViewModel() {
     private val _hasAudioPermission = mutableStateOf(false)
     val hasAudioPermission: State<Boolean> = _hasAudioPermission
 
@@ -14,7 +14,7 @@ class VideoScreenViewModel: ViewModel() {
     fun onPermissionsResult(
         acceptedAudioPermission: Boolean,
         acceptedCameraPermission: Boolean
-    ){
+    ) {
         _hasAudioPermission.value = acceptedAudioPermission
         _hasCameraPermission.value = acceptedCameraPermission
     }

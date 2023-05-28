@@ -1,7 +1,6 @@
 package com.example.opencontrol.domain
 
 import com.example.opencontrol.model.AnswerNetwork
-import com.example.opencontrol.model.Kno
 import com.example.opencontrol.model.ListKno
 import com.example.opencontrol.model.ListMeasures
 import com.example.opencontrol.model.Note

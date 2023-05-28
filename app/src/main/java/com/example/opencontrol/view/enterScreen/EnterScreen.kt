@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -30,10 +29,6 @@ import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import com.example.opencontrol.view.MainScreen
-import com.example.opencontrol.view.chatTab.ChatScreen
-import com.example.opencontrol.view.userProfileTab.AddBusinessScreen
-import com.example.opencontrol.view.userProfileTab.UserProfileScreen
 import timber.log.Timber
 
 class EnterScreen : Screen {
@@ -102,13 +97,13 @@ fun MoscowLogo() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
             .padding(top = 28.dp),
         verticalAlignment = Alignment.Bottom
     ) {
         Image(
             painter = painterResource(id = R.drawable.mos_logo),
-            contentDescription = "", modifier = Modifier.padding(start = 24.dp)
+            contentDescription = "",
+            modifier = Modifier.padding(start = 24.dp).size(70.dp)
         )
         Column(
             modifier = Modifier.padding(start = 16.dp)

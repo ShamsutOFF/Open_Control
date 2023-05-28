@@ -2,17 +2,7 @@ package com.example.opencontrol.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val PrimaryLidht = Color(0xFF6650a4)
-val ScondaryLight = Color(0xFF625b71)
-val TertiaryLight = Color(0xFF7D5260)
-
 val TestGreen = Color(0xFF18FF00)
-
-
 val SelectedTab = Color(0xFFE35036)
 val UnSelectedTab = Color(0xFFD6D9DF)
 val ChatGreenPrimary = Color(0xFF00AEAC)
@@ -58,7 +48,6 @@ val md_theme_light_outline = Color(0xFF85736F)
 val md_theme_light_inverseOnSurface = Color(0xFFE5F2FF)
 val md_theme_light_inverseSurface = Color(0xFF00344C)
 val md_theme_light_inversePrimary = Color(0xFFFFB4A5)
-val md_theme_light_shadow = Color(0xFF000000)
 val md_theme_light_surfaceTint = Color(0xFFB12C16)
 val md_theme_light_outlineVariant = Color(0xFFD8C2BD)
 val md_theme_light_scrim = Color(0xFF000000)
@@ -89,10 +78,6 @@ val md_theme_dark_outline = Color(0xFFA08C89)
 val md_theme_dark_inverseOnSurface = Color(0xFF001E2E)
 val md_theme_dark_inverseSurface = Color(0xFFC7E7FF)
 val md_theme_dark_inversePrimary = Color(0xFFB12C16)
-val md_theme_dark_shadow = Color(0xFF000000)
 val md_theme_dark_surfaceTint = Color(0xFFFFB4A5)
 val md_theme_dark_outlineVariant = Color(0xFF534340)
 val md_theme_dark_scrim = Color(0xFF000000)
-
-
-val seed = Color(0xFFE35036)
