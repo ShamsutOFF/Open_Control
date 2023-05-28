@@ -85,28 +85,7 @@ private fun EnterScreenContent() {
                     .weight(1f),
                     text = "КАК ИНСПЕКТОР")
             }
-            TempTestButton()
         }
-    }
-}
-//TODO Delete this button
-@Composable
-private fun TempTestButton() {
-    val navigator = LocalNavigator.currentOrThrow
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Text(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .clickable {
-                    navigator.push(ChatScreen())
-                    Timber.d("@@@ Click to register!")
-                },
-            text = "Дверь разработчика",
-            fontWeight = FontWeight.SemiBold,
-            color = md_theme_light_primary,
-            fontSize = 13.sp,
-            textDecoration = TextDecoration.Underline
-        )
     }
 }
 

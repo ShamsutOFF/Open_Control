@@ -1,17 +1,29 @@
 package com.example.opencontrol.di
 
+import androidx.room.Room
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.domain.BaseApi
 import com.example.opencontrol.domain.ChatApi
 import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.domain.MainRepositoryImpl
+import com.example.opencontrol.model.KnoDatabase
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
+    single {
+        Room.databaseBuilder(
+            androidContext(),
+            KnoDatabase::class.java,
+            "Database"
+        ).build()
+    }
+
+    single { get<KnoDatabase>().knoDao() }
     single {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -54,5 +66,5 @@ val appModule = module {
         MainRepositoryImpl(get(), get())
     }
 
-    single { MainViewModel(get()) }
+    single { MainViewModel(get(), get()) }
 }

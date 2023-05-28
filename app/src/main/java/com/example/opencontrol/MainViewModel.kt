@@ -8,35 +8,41 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.opencontrol.domain.MainRepository
-import com.example.opencontrol.model.AnswerNetwork
 import com.example.opencontrol.model.ChatMessage
 import com.example.opencontrol.model.Kno
+import com.example.opencontrol.model.KnoDao
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.QuestionNetwork
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Duration
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
-class MainViewModel(private val repository: MainRepository) : ViewModel() {
+class MainViewModel(
+    private val repository: MainRepository,
+    private val knoDao: KnoDao
+) : ViewModel() {
+
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
 
     var photoUris = mutableStateListOf<Uri>()
 
     var chatListOfMessages = mutableStateListOf<ChatMessage>()
+    var listOfAllKnos = mutableStateListOf<Kno>()
 
     init {
         Timber.d("@@@ init")
         chatListOfMessages.add(ChatMessage("Здравствуйте! Я бот-помощник. Чем могу помочь?", false))
-        getKnos()
+        downloadKnosToDatabase()
+        getKnosFromRoom()
     }
 
-    fun getKnos() {
+    private fun downloadKnosToDatabase() {
         Timber.d("@@@ getKnos")
         viewModelScope.launch {
             repository.getKnos()
@@ -45,7 +51,21 @@ class MainViewModel(private val repository: MainRepository) : ViewModel() {
                     Timber.e(ex)
                 }
                 .collect {
-                    Timber.d("@@@ List KNO = $it")
+                    listOfAllKnos.addAll(it.knoList)
+                    knoDao.insertAllKno(it.knoList)
+                }
+        }
+    }
+
+    fun getKnosFromRoom() {
+        viewModelScope.launch {
+            knoDao.getAllKno()
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    listOfAllKnos.addAll(it)
                 }
         }
     }

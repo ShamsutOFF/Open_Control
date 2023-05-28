@@ -75,6 +75,9 @@ class NewNoteScreen : Screen {
 @Composable
 private fun NewNoteContent() {
     val viewModel = getViewModel<MainViewModel>()
+    val knosNames = viewModel.listOfAllKnos.map {
+        it.name
+    }
     Column(
         modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -85,7 +88,7 @@ private fun NewNoteContent() {
                 .padding(horizontal = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item { SelectableItemBlock("Kонтрольно-надзорный орган", viewModel.getControlAgencies()) }
+            item { SelectableItemBlock("Kонтрольно-надзорный орган", knosNames) }
             item { SelectableItemBlock("Вид контроля", viewModel.getControlTypes()) }
             item { SelectableItemBlock("Подразделение", viewModel.getDepartments()) }
             item { ToggleItem("Выберите тип встречи") }
@@ -97,41 +100,6 @@ private fun NewNoteContent() {
         }
     }
 }
-//
-//@Composable
-//private fun SelectableItem(title: String, values: List<String>) {
-//    var expanded by remember { mutableStateOf(false) }
-//    var selectedOption by remember { mutableStateOf("нажмите для выбора") }
-//    Column(
-//        modifier = Modifier
-//            .padding(8.dp)
-//            .fillMaxWidth()
-//    ) {
-//        Text(text = title, fontSize = 14.sp)
-//        OutlinedButton(
-//            modifier = Modifier
-//                .fillMaxWidth(),
-//            shape = RoundedCornerShape(32),
-//            onClick = { expanded = true },
-//            colors = ButtonDefaults.outlinedButtonColors(contentColor = GreyText)
-//        ) {
-//            Text(text = selectedOption)
-//        }
-//        DropdownMenu(
-//            expanded = expanded,
-//            onDismissRequest = { expanded = false },
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            values.forEachIndexed { index, it ->
-//                DropdownMenuItem(text = { Text(text = it) }, onClick = {
-//                    selectedOption = it
-//                    expanded = false
-//                })
-//                if (index != values.size - 1) Divider()
-//            }
-//        }
-//    }
-//}
 
 @Composable
 private fun ToggleItem(title: String) {
