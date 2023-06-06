@@ -9,11 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.model.ChatMessage
-import com.example.opencontrol.model.Kno
-import com.example.opencontrol.model.KnoDao
-import com.example.opencontrol.model.Measures
+import com.example.opencontrol.model.networkDTOs.Kno
+import com.example.opencontrol.model.database.KnoDao
+import com.example.opencontrol.model.networkDTOs.Measures
 import com.example.opencontrol.model.Note
-import com.example.opencontrol.model.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
@@ -25,6 +26,7 @@ class MainViewModel(
     private val repository: MainRepository,
     private val knoDao: KnoDao
 ) : ViewModel() {
+    var userId by mutableStateOf("")
 
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
@@ -42,7 +44,7 @@ class MainViewModel(
         getKnosFromRoom()
     }
 
-    suspend fun getKnoByName(name: String): Kno?{
+    suspend fun getKnoByName(name: String): Kno? {
         return knoDao.getKnoByName(name)
     }
 
@@ -74,14 +76,14 @@ class MainViewModel(
         }
     }
 
-    fun getMeasuresForKno(knoId: String){
+    fun getMeasuresForKno(knoId: String) {
         viewModelScope.launch {
             repository.getMeasuresForKno(knoId)
                 .flowOn(Dispatchers.IO)
                 .catch { ex ->
                     Timber.e(ex)
                 }
-                .collect{
+                .collect {
                     measuresForKno.clear()
                     measuresForKno.addAll(it.measuresList)
                 }
@@ -90,7 +92,9 @@ class MainViewModel(
     }
 
     fun getAnswerFromChat(question: String) {
-        val questionNetwork = QuestionNetwork(id = 12345, question = question, newChat = false)
+        // todo add id from userId
+        val questionNetwork = QuestionNetwork(id = userId, question = question, newChat = false)
+//        val questionNetwork = QuestionNetwork(id = 12345, question = question, newChat = false)
         viewModelScope.launch {
             repository.getAnswerFromChat(questionNetwork)
                 .flowOn(Dispatchers.IO)
@@ -147,4 +151,31 @@ class MainViewModel(
     fun changeSelectedDate(newDate: LocalDate) {
         selectedDate = newDate
     }
+
+    fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
+        viewModelScope.launch {
+            repository.login(userRegisterInfoNetwork)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    userId = it.id
+                }
+        }
+    }
+
+    fun registerNewAccaunt(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
+        viewModelScope.launch {
+            repository.register(userRegisterInfoNetwork)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    userId = it.id
+                }
+        }
+    }
+
 }

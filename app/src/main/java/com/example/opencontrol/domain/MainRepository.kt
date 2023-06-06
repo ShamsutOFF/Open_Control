@@ -1,10 +1,12 @@
 package com.example.opencontrol.domain
 
-import com.example.opencontrol.model.AnswerNetwork
-import com.example.opencontrol.model.ListKno
-import com.example.opencontrol.model.ListMeasures
+import com.example.opencontrol.model.networkDTOs.AnswerNetwork
+import com.example.opencontrol.model.networkDTOs.ListKno
+import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
-import com.example.opencontrol.model.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
@@ -29,5 +31,9 @@ interface MainRepository {
     fun getKnos(): Flow<ListKno>
 
     fun getMeasuresForKno(knoId: String): Flow<ListMeasures>
+
+    fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork>
+
+    fun register(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork>
 
 }

@@ -46,21 +46,27 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
 import com.example.opencontrol.ui.theme.md_theme_light_primary
+import com.example.opencontrol.view.MainScreen
+import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-class RegistrationScreen : Screen {
+data class RegistrationScreen(val role: String) : Screen {
     @Composable
     override fun Content() {
-        RegistrationScreenContent()
+        RegistrationScreenContent(role)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun RegistrationScreenContent() {
+private fun RegistrationScreenContent(role: String) {
+    Timber.d("@@@ Регистрируемся как $role")
+    val viewModel = getViewModel<MainViewModel>()
     val navigator = LocalNavigator.currentOrThrow
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -87,8 +93,21 @@ private fun RegistrationScreenContent() {
             passwordVisible,
             { passwordVisible = it }
         )
-        HaveAccountTextButton()
-        BigSquareButton()
+        HaveAccountTextButton {
+            navigator.push(LoginScreen(role))
+        }
+        RegisterButton {
+            viewModel.registerNewAccaunt(
+                UserRegisterInfoNetwork(
+                    login = login,
+                    password = password,
+                    role = role
+                )
+            )
+        }
+        if (viewModel.userId.isNotEmpty()) {
+            navigator.push(MainScreen)
+        }
     }
 }
 
@@ -183,16 +202,12 @@ private fun PasswordTextField(
 }
 
 @Composable
-private fun HaveAccountTextButton() {
-    val navigator = LocalNavigator.currentOrThrow
+private fun HaveAccountTextButton(clickFunction: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
         Text(
             modifier = Modifier
                 .padding(vertical = 16.dp)
-                .clickable {
-                    navigator.push(LoginScreen())
-                    Timber.d("@@@ Click to Уже есть аккаунт?")
-                },
+                .clickable { clickFunction() },
             text = "Уже есть аккаунт?",
             fontWeight = FontWeight.SemiBold,
             color = md_theme_light_primary,
@@ -203,15 +218,13 @@ private fun HaveAccountTextButton() {
 }
 
 @Composable
-private fun BigSquareButton() {
+private fun RegisterButton(function: () -> Unit) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp)
             .height(60.dp),
-        onClick = {
-            Timber.d("@@@ Click to Зарегестрироваться!!!")
-        },
+        onClick = { function() },
         shape = RoundedCornerShape(32),
         colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
     ) {

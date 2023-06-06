@@ -26,6 +26,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.R
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
@@ -62,8 +63,7 @@ private fun EnterScreenContent() {
                     .clip(RoundedCornerShape(12))
                     .background(md_theme_light_primary)
                     .clickable {
-                        Timber.d("@@@ КАК БИЗНЕС")
-                        navigator.push(LoginScreen())
+                        navigator.push(LoginScreen(UserRole.BUSINESS.name))
                     }
                     .weight(1f),
                     text = "КАК БИЗНЕС")
@@ -74,8 +74,7 @@ private fun EnterScreenContent() {
                     .clip(RoundedCornerShape(12))
                     .background(md_theme_light_primary)
                     .clickable {
-                        Timber.d("@@@ КАК ИНСПЕКТОР")
-                        navigator.push(LoginScreen())
+                        navigator.push(LoginScreen(UserRole.INSPECTION.name))
                     }
                     .weight(1f),
                     text = "КАК ИНСПЕКТОР")

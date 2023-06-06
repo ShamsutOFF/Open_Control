@@ -6,7 +6,7 @@ import com.example.opencontrol.domain.BaseApi
 import com.example.opencontrol.domain.ChatApi
 import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.domain.MainRepositoryImpl
-import com.example.opencontrol.model.KnoDatabase
+import com.example.opencontrol.model.database.KnoDatabase
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -55,7 +55,7 @@ val appModule = module {
             .build()
 
         Retrofit.Builder()
-            .baseUrl("http://178.170.195.121:5000")
+            .baseUrl("http://46.243.201.1:5000")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

@@ -85,6 +85,7 @@ dependencies {
     implementation ("cafe.adriel.voyager:voyager-navigator:$voyagerVersion")
     implementation ("cafe.adriel.voyager:voyager-transitions:$voyagerVersion")
     implementation ("cafe.adriel.voyager:voyager-tab-navigator:$voyagerVersion")
+    implementation ("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyagerVersion")
 
     //Agora
     implementation ("com.github.AgoraIO-Community.VideoUIKit-Android:final:v4.0.0")

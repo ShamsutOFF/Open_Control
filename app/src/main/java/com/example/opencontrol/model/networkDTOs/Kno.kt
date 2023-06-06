@@ -1,4 +1,4 @@
-package com.example.opencontrol.model
+package com.example.opencontrol.model.networkDTOs
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

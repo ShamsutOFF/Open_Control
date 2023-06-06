@@ -48,22 +48,27 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
 import com.example.opencontrol.ui.theme.md_theme_light_primary
 import com.example.opencontrol.view.MainScreen
+import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-class LoginScreen : Screen {
+data class LoginScreen(val role: String) : Screen {
     @Composable
     override fun Content() {
-        LoginScreenContent()
+        LoginScreenContent(role)
     }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun LoginScreenContent() {
+private fun LoginScreenContent(role: String) {
+    val viewModel = getViewModel<MainViewModel>()
+    Timber.d("@@@ Входим как $role")
     val navigator = LocalNavigator.currentOrThrow
     var login by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -91,9 +96,19 @@ private fun LoginScreenContent() {
             { passwordVisible = it }
         )
         ForgotPasswordTextButton()
-        BigSquareButton()
-        RegisterTextButton()
-        TempTestButton()
+        LoginButton {
+            viewModel.login(
+                UserRegisterInfoNetwork(
+                    login = login,
+                    password = password,
+                    role = role
+                )
+            )
+        }
+        RegisterTextButton { navigator.push(RegistrationScreen(role)) }
+        if (viewModel.userId.isNotEmpty()) {
+            navigator.push(MainScreen)
+        }
     }
 }
 
@@ -204,23 +219,14 @@ private fun ForgotPasswordTextButton() {
 }
 
 @Composable
-private fun BigSquareButton() {
-    val navigator = LocalNavigator.currentOrThrow
+private fun LoginButton(clickFunction: () -> Unit) {
     Button(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp)
-            .height(60.dp)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = { Timber.d("@@@ onPress!!!") },
-                    onDoubleTap = { Timber.d("@@@ onDoubleTap!!!") },
-                    onLongPress = { navigator.push(MainScreen) },
-                    onTap = { Timber.d("@@@ onTap!!!") }
-                )
-            },
+            .height(60.dp),
         onClick = {
-            Timber.d("@@@ Login!!!")
+            clickFunction()
         },
         shape = RoundedCornerShape(32),
         colors = ButtonDefaults.buttonColors(containerColor = md_theme_light_primary)
@@ -236,38 +242,13 @@ private fun BigSquareButton() {
 }
 
 @Composable
-private fun RegisterTextButton() {
-    val navigator = LocalNavigator.currentOrThrow
+private fun RegisterTextButton(clickFunction: () -> Unit) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Text(
             modifier = Modifier
                 .padding(vertical = 16.dp)
-                .clickable {
-                    navigator.push(RegistrationScreen())
-                    Timber.d("@@@ Click to register!")
-                },
+                .clickable { clickFunction() },
             text = "Зарегистрироваться",
-            fontWeight = FontWeight.SemiBold,
-            color = md_theme_light_primary,
-            fontSize = 13.sp,
-            textDecoration = TextDecoration.Underline
-        )
-    }
-}
-
-//TODO Delete this button
-@Composable
-private fun TempTestButton() {
-    val navigator = LocalNavigator.currentOrThrow
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        Text(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .clickable {
-                    navigator.push(MainScreen)
-                    Timber.d("@@@ Click to register!")
-                },
-            text = "Дверь разработчика",
             fontWeight = FontWeight.SemiBold,
             color = md_theme_light_primary,
             fontSize = 13.sp,

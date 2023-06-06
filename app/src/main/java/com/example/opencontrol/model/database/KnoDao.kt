@@ -1,9 +1,10 @@
-package com.example.opencontrol.model
+package com.example.opencontrol.model.database
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.opencontrol.model.networkDTOs.Kno
 import kotlinx.coroutines.flow.Flow
 
 @Dao

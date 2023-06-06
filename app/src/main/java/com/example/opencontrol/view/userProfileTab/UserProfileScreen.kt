@@ -36,8 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.stack.popUntil
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.ui.theme.ExitIconBackground
 import com.example.opencontrol.ui.theme.ExitIconIcon
@@ -45,7 +47,9 @@ import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.LightYellowIcon
 import com.example.opencontrol.ui.theme.OrangeBackground
+import com.example.opencontrol.view.enterScreen.EnterScreen
 import com.example.opencontrol.view.enterScreen.LoginScreen
+import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
 class UserProfileScreen : Screen {
@@ -323,6 +327,7 @@ private fun UserDetailInfoButton() {
 
 @Composable
 private fun AccountExitButton() {
+    val viewModel = getViewModel<MainViewModel>()
     val navigator = LocalNavigator.currentOrThrow
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     Row(
@@ -330,7 +335,10 @@ private fun AccountExitButton() {
         modifier = Modifier
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .fillMaxWidth()
-            .clickable { navigator.push(LoginScreen()) }
+            .clickable {
+                viewModel.userId = ""
+                navigator.popUntilRoot()
+            }
     ) {
         Box(
             modifier = Modifier

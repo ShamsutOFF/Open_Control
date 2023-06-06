@@ -1,7 +1,7 @@
 package com.example.opencontrol.domain
 
-import com.example.opencontrol.model.AnswerNetwork
-import com.example.opencontrol.model.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.AnswerNetwork
+import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import retrofit2.http.Body
 import retrofit2.http.POST
 

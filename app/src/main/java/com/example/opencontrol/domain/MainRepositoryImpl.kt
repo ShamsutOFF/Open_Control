@@ -1,10 +1,12 @@
 package com.example.opencontrol.domain
 
-import com.example.opencontrol.model.ListKno
-import com.example.opencontrol.model.ListMeasures
+import com.example.opencontrol.model.networkDTOs.ListKno
+import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
-import com.example.opencontrol.model.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
@@ -79,6 +81,17 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
     override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow {
         emit(baseApi.getMeasures(knoId))
     }
+
+    override fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> = flow {
+        Timber.d("@@@ login userRegisterInfoNetwork = $userRegisterInfoNetwork")
+        emit(baseApi.login(userRegisterInfoNetwork))
+    }
+
+    override fun register(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> =
+        flow {
+            Timber.d("@@@ login userRegisterInfoNetwork = $userRegisterInfoNetwork")
+            emit(baseApi.register(userRegisterInfoNetwork))
+        }
 
     private val firstNames =
         listOf("Александр", "Андрей", "Дмитрий", "Иван", "Максим", "Никита", "Сергей")
