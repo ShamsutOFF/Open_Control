@@ -34,4 +34,6 @@ interface MainRepository {
     fun noteMeToConsultation(noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork): Flow<Unit>
 
     fun getAllAppointments(userId: String): Flow<ListAppointments>
+
+    fun cancelAppointment(appointmentId: String): Flow<Unit>
 }

@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AppointmentId
 import com.example.opencontrol.model.networkDTOs.IdNetwork
 import com.example.opencontrol.model.networkDTOs.ListAppointments
 import com.example.opencontrol.model.networkDTOs.ListFreeWindows
@@ -32,6 +33,10 @@ interface BaseApi {
     //запрос на запись от бизнеса
     @PUT("/business-user/appointments/select")
     suspend fun signUpToConsultation(@Body noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork)
+
+    //отмена записи любой стороной
+    @PUT("/appointments/cancel")
+    suspend fun cancelConsultation(@Body appointmentId: AppointmentId)
 
     //User
     @POST("user/register")

@@ -166,7 +166,7 @@ class MainViewModel(
     }
 
     fun getAllBusinessAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
-        Timber.d("@@@ businessAppointments = $businessAppointments")
+        Timber.d("@@@ getAllBusinessAppointmentsInLDT businessAppointments = ${businessAppointments.toList()}")
         val appointmentsInLocalDateTime = businessAppointments.toList().map {
             AppointmentsInLocalDateTime(
                 id = it.id,
@@ -251,6 +251,20 @@ class MainViewModel(
                 }
                 .collect {
                     businessAppointments.addAll(it.appointments)
+                }
+        }
+    }
+
+    fun cancelConsultation(appointmentId: String) {
+        Timber.d("@@@ cancelConsultation(appointmentId = $appointmentId)")
+        viewModelScope.launch {
+            repository.cancelAppointment(appointmentId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+
                 }
         }
     }

@@ -38,13 +38,13 @@ import java.util.Locale
 class NoteScreen : Screen {
     @Composable
     override fun Content() {
-        Timber.d("@@@ NoteScreenContent()")
         NoteScreenContent()
     }
 }
 
 @Composable
 private fun NoteScreenContent() {
+    Timber.d("@@@ NoteScreenContent()")
     val viewModel = getViewModel<MainViewModel>()
     val businessAppointments = viewModel.getAllBusinessAppointmentsInLDT()
     val listState = rememberLazyListState()

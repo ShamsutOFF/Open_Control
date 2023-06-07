@@ -4,6 +4,7 @@ import com.example.opencontrol.model.networkDTOs.ListKno
 import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
+import com.example.opencontrol.model.networkDTOs.AppointmentId
 import com.example.opencontrol.model.networkDTOs.IdNetwork
 import com.example.opencontrol.model.networkDTOs.ListAppointments
 import com.example.opencontrol.model.networkDTOs.ListFreeWindows
@@ -79,6 +80,11 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
     override fun getAllAppointments(userId: String): Flow<ListAppointments> =
         flow {
             emit(baseApi.getAllBusinessAppointments(userId))
+        }
+
+    override fun cancelAppointment(appointmentId: String): Flow<Unit> =
+        flow {
+            emit(baseApi.cancelConsultation(AppointmentId(appointmentId)))
         }
 
     private val firstNames =

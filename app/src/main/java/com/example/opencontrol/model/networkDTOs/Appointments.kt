@@ -35,3 +35,7 @@ data class AppointmentsInLocalDateTime (
     val measureId : Int,
     val measureName : String
 )
+data class AppointmentId (
+    @SerializedName("appointmentId")
+    val id : String
+)

@@ -108,7 +108,11 @@ private fun NoteInfoContent(noteId: String) {
         ) {
             EndEditingBlock(
                 textOnDismiss = "Перенести",
-                onDismiss = { Timber.d("@@@ Перенести") },
+                onDismiss = {
+                    Timber.d("@@@ Перенести")
+                    viewModel.cancelConsultation(note.id)
+                    navigator.replace(NewNoteScreen())
+                },
                 textOnConfirm = "Применить",
                 onConfirm = {
                     Timber.d("@@@ Применить")
