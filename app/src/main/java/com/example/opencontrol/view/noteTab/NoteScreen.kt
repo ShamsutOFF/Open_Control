@@ -49,9 +49,10 @@ private fun NoteScreenContent() {
     val businessAppointments = viewModel.getAllBusinessAppointmentsInLDT()
     val listState = rememberLazyListState()
     val selectedIndex = businessAppointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
-    val scrollPosition = if (selectedIndex != -1) selectedIndex else businessAppointments.lastIndex
+    val scrollPosition = selectedIndex.takeIf { it != -1 } ?: businessAppointments.lastIndex.takeIf { it != -1 } ?: 0
 
     LaunchedEffect(key1 = viewModel.selectedDate) {
+        Timber.d("\"@@@ scrollPosition = $scrollPosition\"")
         listState.animateScrollToItem(index = scrollPosition)
     }
     Column(modifier = Modifier.background(GreyBackground)) {
