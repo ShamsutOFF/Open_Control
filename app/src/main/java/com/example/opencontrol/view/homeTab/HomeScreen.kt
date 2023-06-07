@@ -49,6 +49,7 @@ class HomeScreen : Screen {
 private fun HomeScreenContent() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<MainViewModel>()
+    viewModel.getAllAppointments()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,11 +77,12 @@ private fun HomeScreenContent() {
                         .weight(1f),
                         text = "Калькулятор нарушений",
                         icon = R.drawable.calculator_icon)
-                    val nearestNote = viewModel.getNearestNote()
-                    val formatter = DateTimeFormatter.ofPattern("dd MMMM", Locale("ru"))
+                    val nearestNote = viewModel.getNearestAppointment()
+                    val formatterDate = DateTimeFormatter.ofPattern("dd MMMM", Locale("ru"))
+                    val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
                     Timber.d("@@@ nearestNote = $nearestNote")
                     val text = if (nearestNote != null)
-                        "Ближайшая запись: ${nearestNote.date.format(formatter)} ${nearestNote.time}"
+                        "Ближайшая запись: ${nearestNote.time.format(formatterDate)} ${nearestNote.time.format(formatterTime)}"
                     else "Нет ближайших записей"
                     WidgetButton(text = text,
                         modifier = Modifier

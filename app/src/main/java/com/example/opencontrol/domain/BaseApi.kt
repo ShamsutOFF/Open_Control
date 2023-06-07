@@ -1,6 +1,7 @@
 package com.example.opencontrol.domain
 
 import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.ListAppointments
 import com.example.opencontrol.model.networkDTOs.ListFreeWindows
 import com.example.opencontrol.model.networkDTOs.ListKno
 import com.example.opencontrol.model.networkDTOs.ListMeasures
@@ -24,9 +25,13 @@ interface BaseApi {
     @GET("/appointments/free")
     suspend fun getFreeWindows(@Query("knoId") knoId: String): ListFreeWindows
 
-    //запрос о записи от бизнеса
+    //получение списка всех записей бизнес-пользователя
+    @GET("/business-user/appointments")
+    suspend fun getAllBusinessAppointments(@Query("userId") userId: String): ListAppointments
+
+    //запрос на запись от бизнеса
     @PUT("/business-user/appointments/select")
-    suspend fun signUpToConsultation(@Body noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork): ListFreeWindows
+    suspend fun signUpToConsultation(@Body noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork)
 
     //User
     @POST("user/register")

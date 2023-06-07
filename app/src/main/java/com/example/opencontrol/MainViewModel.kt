@@ -13,8 +13,11 @@ import com.example.opencontrol.model.networkDTOs.Kno
 import com.example.opencontrol.model.database.KnoDao
 import com.example.opencontrol.model.networkDTOs.Measures
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.model.networkDTOs.Appointments
+import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.model.networkDTOs.FreeWindow
 import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
+import com.example.opencontrol.model.networkDTOs.NoteInfoForConsultationNetwork
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +25,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.sql.Timestamp
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -43,6 +45,7 @@ class MainViewModel(
     var listOfAllKnos = mutableStateListOf<Kno>()
     var measuresForKno = mutableStateListOf<Measures>()
     var freeWindows = mutableStateListOf<FreeWindow>()
+    var businessAppointments = mutableStateListOf<Appointments>()
 
     init {
         Timber.d("@@@ init")
@@ -127,21 +130,19 @@ class MainViewModel(
         }
     }
 
-    fun getAllNotes(): List<Note> {
-        return repository.getAllNotes()
-    }
-
-    fun getNearestNote(): Note? {
-        val notes = repository.getAllNotes().sortedBy { it.date }
-        val nearestIndex = notes.indexOfFirst { it.date >= LocalDate.now() }
+    fun getNearestAppointment(): AppointmentsInLocalDateTime? {
+        val notes = getAllBusinessAppointmentsInLDT().sortedBy { it.time }
+        val nearestIndex = notes.indexOfFirst { it.time >= LocalDateTime.now() }
         return if (nearestIndex != -1)
             notes[nearestIndex]
         else
             null
     }
 
-    fun getNoteById(id: String): Note {
-        return repository.getNoteById(id)
+    fun getAppointmentById(id: String): AppointmentsInLocalDateTime {
+        return getAllBusinessAppointmentsInLDT().first {
+            it.id == id
+        }
     }
 
     fun getFreeTimeForSelectedDate(): List<FreeWindowInLocalDateTime> {
@@ -164,8 +165,23 @@ class MainViewModel(
         return freeWindowsForSelectedDate
     }
 
-    fun addNewNote(note: Note): Boolean {
-        return repository.saveNote(note)
+    fun getAllBusinessAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
+        Timber.d("@@@ businessAppointments = $businessAppointments")
+        val appointmentsInLocalDateTime = businessAppointments.toList().map {
+            AppointmentsInLocalDateTime(
+                id = it.id,
+                time = LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(it.time.time),
+                    ZoneId.systemDefault()
+                ),
+                status = it.status,
+                knoId = it.knoId,
+                knoName = it.knoName,
+                measureId = it.measureId,
+                measureName = it.measureName
+            )
+        }
+        return appointmentsInLocalDateTime
     }
 
     fun deleteNoteById(id: String): Boolean {
@@ -202,4 +218,40 @@ class MainViewModel(
         }
     }
 
+    fun noteMeToConsultation(appointmentId: String, selectedMeasure: String) {
+        Timber.d("@@@ noteMeToConsultation(appointmentId = $appointmentId, selectedMeasure = $selectedMeasure")
+        viewModelScope.launch {
+            measuresForKno.toList().find {
+                it.name == selectedMeasure
+            }?.let {
+                repository.noteMeToConsultation(
+                    NoteInfoForConsultationNetwork(
+                        userId = userId,
+                        appointmentId = appointmentId,
+                        measureId = it.id
+                    )
+                )
+                    .flowOn(Dispatchers.IO)
+                    .catch { ex ->
+                        Timber.e(ex)
+                    }
+                    .collect {
+                    }
+            }
+        }
+    }
+
+    fun getAllAppointments() {
+        Timber.d("@@@ getAllAppointments()")
+        viewModelScope.launch {
+            repository.getAllAppointments(userId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    businessAppointments.addAll(it.appointments)
+                }
+        }
+    }
 }

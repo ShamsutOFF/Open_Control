@@ -26,10 +26,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
-import com.example.opencontrol.model.Note
+import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.ui.theme.GreyBackground
 import com.example.opencontrol.ui.theme.LightColors
-import com.example.opencontrol.view.enterScreen.EnterScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
@@ -47,14 +46,10 @@ class NoteScreen : Screen {
 @Composable
 private fun NoteScreenContent() {
     val viewModel = getViewModel<MainViewModel>()
-    val markedDateList = viewModel.getAllNotes().map { note ->
-        note.date
-    }
+    val businessAppointments = viewModel.getAllBusinessAppointmentsInLDT()
     val listState = rememberLazyListState()
-
-    val notes = viewModel.getAllNotes().sortedBy { it.date }
-    val selectedIndex = notes.indexOfFirst { it.date >= viewModel.selectedDate }
-    val scrollPosition = if (selectedIndex != -1) selectedIndex else notes.lastIndex
+    val selectedIndex = businessAppointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
+    val scrollPosition = if (selectedIndex != -1) selectedIndex else businessAppointments.lastIndex
 
     LaunchedEffect(key1 = viewModel.selectedDate) {
         listState.animateScrollToItem(index = scrollPosition)
@@ -62,12 +57,12 @@ private fun NoteScreenContent() {
     Column(modifier = Modifier.background(GreyBackground)) {
         MonthlyCalendar(
             selectedDate = viewModel.selectedDate,
-            markedDateList = markedDateList,
+            markedDateList = businessAppointments.map { it.time.toLocalDate() },
             onDateSelected = viewModel::changeSelectedDate
         )
         MyNotesAndButtonsRow()
         LazyColumn(state = listState) {
-            items(notes) { note ->
+            items(businessAppointments) { note ->
                 NoteCard(note = note)
             }
         }
@@ -109,7 +104,7 @@ private fun MyNotesAndButtonsRow() {
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun NoteCard(note: Note) {
+private fun NoteCard(note: AppointmentsInLocalDateTime) {
     val navigator = LocalNavigator.currentOrThrow
     Card(
         onClick = { navigator.push(NoteInfoScreen(note.id)) },
@@ -122,7 +117,7 @@ private fun NoteCard(note: Note) {
 
     ) {
         Text(
-            text = note.type,
+            text = note.knoName,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -130,7 +125,7 @@ private fun NoteCard(note: Note) {
             fontWeight = FontWeight.Medium
         )
         Text(
-            text = "Инспектор: ${note.inspectorFIO.lastName + " " + note.inspectorFIO.firstName + " " + note.inspectorFIO.patronymic}",
+            text = note.measureName,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
@@ -143,14 +138,18 @@ private fun NoteCard(note: Note) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
+            val formatter = DateTimeFormatter.ofPattern("HH:mm")
+            val formattedTime = note.time.format(formatter)
+            val formattedPlusHour = note.time.plusHours(1).format(formatter)
+
             val formatter1 = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
             Text(
-                text = note.time,
+                text ="$formattedTime - $formattedPlusHour",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )
             Text(
-                text = note.date.format(formatter1),
+                text = note.time.format(formatter1),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )

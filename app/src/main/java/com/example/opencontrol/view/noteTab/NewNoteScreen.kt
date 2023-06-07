@@ -46,6 +46,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
@@ -68,6 +70,7 @@ class NewNoteScreen : Screen {
 @Composable
 private fun NewNoteContent() {
     val viewModel = getViewModel<MainViewModel>()
+    val navigator = LocalNavigator.currentOrThrow
     val knosNames = viewModel.listOfAllKnos.map {
         it.name
     }
@@ -128,7 +131,15 @@ private fun NewNoteContent() {
                     selectedWindow
                 ) { selectedWindow = it }
             }
-            item { NoteButton() }
+            item {
+                NoteButton(
+                    selectedMeasure != "нажмите для выбора" && selectedWindow.id.isNotBlank()
+                ) {
+                    Timber.d("@@@ Будем записываться")
+                    viewModel.noteMeToConsultation(selectedWindow.id, selectedMeasure)
+                    navigator.pop()
+                }
+            }
         }
     }
 }
@@ -181,7 +192,7 @@ private fun AddDocItem() {
 }
 
 @Composable
-fun ImageBox(uri: Uri, deletePhoto: (Uri) -> Unit) {
+private fun ImageBox(uri: Uri, deletePhoto: (Uri) -> Unit) {
     Box(
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -220,7 +231,6 @@ private fun FreeTimeForRecording(
         items(freeTimeForRecording) { window ->
             SelectableTimeChip(
                 window,
-//                window.appointmentTime,
                 window == selectedTime
             ) { onTimeSelected(it) }
         }
@@ -263,7 +273,7 @@ private fun SelectableTimeChip(
 }
 
 @Composable
-private fun NoteButton() {
+private fun NoteButton(enabled: Boolean, function: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -272,8 +282,9 @@ private fun NoteButton() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
+            enabled = enabled,
             onClick = {
-                Timber.d("@@@ Implement it!!!")
+                function()
             }, shape = RoundedCornerShape(32)
         ) {
             Text(

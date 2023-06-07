@@ -5,7 +5,9 @@ import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
 import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.ListAppointments
 import com.example.opencontrol.model.networkDTOs.ListFreeWindows
+import com.example.opencontrol.model.networkDTOs.NoteInfoForConsultationNetwork
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
@@ -31,71 +33,52 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
         return emptyNote
     }
 
-    override fun saveNote(note: Note): Boolean {
-        return notes.add(note)
-    }
-
     override fun deleteNoteById(id: String): Boolean {
         return notes.remove(getNoteById(id))
     }
 
-    override fun getDepartments(): List<String> {
-        return listOf("Подразделение 1", "Подразделение 2", "Подразделение 3")
-    }
-
-    override fun getControlAgencies(): List<String> {
-        return listOf(
-            "Орган контроля 1",
-            "Орган контроля 2",
-            "Орган контроля 3",
-            "Орган контроля 4"
-        )
-    }
-
-    override fun getControlTypes(): List<String> {
-        return listOf(
-            "Тип контроля 1",
-            "Тип контроля 2",
-            "Тип контроля 3",
-            "Тип контроля 4",
-            "Тип контроля 5"
-        )
-    }
-
-    override fun getFreeTimeForRecording(count: Int): List<String> {
-        val listOfTime = mutableListOf<String>()
-        for (i in 0..count) {
-            listOfTime.add(generateRandomTime())
+    override fun getAnswerFromChat(question: QuestionNetwork) =
+        flow {
+            Timber.d("@@@ getAnswerFromChat question = $question")
+            emit(chatApi.getAnswerFromBot(question))
         }
-        return listOfTime.sorted()
-    }
 
-    override fun getAnswerFromChat(question: QuestionNetwork) = flow {
-        Timber.d("@@@ getAnswerFromChat question = $question")
-        emit(chatApi.getAnswerFromBot(question))
-    }
+    override fun getKnos(): Flow<ListKno> =
+        flow {
+            emit(baseApi.getKnos())
+        }
 
-    override fun getKnos(): Flow<ListKno> = flow {
-        emit(baseApi.getKnos())
-    }
+    override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> =
+        flow {
+            emit(baseApi.getMeasures(knoId))
+        }
 
-    override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow {
-        emit(baseApi.getMeasures(knoId))
-    }
+    override fun getFreeWindows(knoId: String): Flow<ListFreeWindows> =
+        flow {
+            emit(baseApi.getFreeWindows(knoId))
+        }
 
-    override fun getFreeWindows(knoId: String): Flow<ListFreeWindows>  = flow {
-        emit(baseApi.getFreeWindows(knoId))
-    }
-
-    override fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> = flow {
-        Timber.d("@@@ login userRegisterInfoNetwork = $userRegisterInfoNetwork")
-        emit(baseApi.login(userRegisterInfoNetwork))
-    }
+    override fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> =
+        flow {
+            Timber.d("@@@ login userRegisterInfoNetwork = $userRegisterInfoNetwork")
+            emit(baseApi.login(userRegisterInfoNetwork))
+        }
 
     override fun register(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> =
         flow {
             Timber.d("@@@ login userRegisterInfoNetwork = $userRegisterInfoNetwork")
             emit(baseApi.register(userRegisterInfoNetwork))
+        }
+
+    override fun noteMeToConsultation(noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork): Flow<Unit> =
+        flow {
+            Timber.d("@@@ login noteInfoForConsultationNetwork = $noteInfoForConsultationNetwork")
+            emit(baseApi.signUpToConsultation(noteInfoForConsultationNetwork))
+        }
+
+    override fun getAllAppointments(userId: String): Flow<ListAppointments> =
+        flow {
+            emit(baseApi.getAllBusinessAppointments(userId))
         }
 
     private val firstNames =
