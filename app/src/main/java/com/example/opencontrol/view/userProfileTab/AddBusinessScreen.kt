@@ -86,7 +86,9 @@ private fun AddBusinessScreenContent() {
             item { EnterInfoItemBlock("Юридический адрес", "Введите юридический адрес") }
             item {
                 EndEditingBlock(
+                    textOnConfirm = "Применить",
                     onDismiss = { Timber.d("@@@ onDismiss") },
+                    textOnDismiss = "Отменить",
                     onConfirm = { Timber.d("@@@ onConfirm") })
             }
         }

@@ -151,7 +151,9 @@ fun EnterInfoItemBlock(title: String, label: String) {
 
 @Composable
 fun EndEditingBlock(
+    textOnDismiss:String,
     onDismiss: () -> Unit,
+    textOnConfirm:String,
     onConfirm: () -> Unit
 ) {
     Row(
@@ -165,12 +167,12 @@ fun EndEditingBlock(
             .weight(1f)
             .padding(8.dp)
         NegativeButton(
-            text = "Отменить",
+            text = textOnDismiss,
             modifier = modifier,
             onClick = onDismiss
         )
         PositiveButton(
-            text = "Применить",
+            text = textOnConfirm,
             modifier = modifier,
             onClick = onConfirm
         )

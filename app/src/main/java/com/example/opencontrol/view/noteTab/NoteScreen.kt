@@ -23,11 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.ui.theme.GreyBackground
 import com.example.opencontrol.ui.theme.LightColors
+import com.example.opencontrol.view.enterScreen.EnterScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
@@ -75,6 +77,7 @@ private fun NoteScreenContent() {
 @Composable
 private fun MyNotesAndButtonsRow() {
     val navigator = LocalNavigator.currentOrThrow
+    val bottomSheetNavigator = LocalBottomSheetNavigator.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -94,7 +97,7 @@ private fun MyNotesAndButtonsRow() {
                 fontWeight = FontWeight.Normal
             )
         }
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { bottomSheetNavigator.show(FilterBottomSheet()) }) {
             Text(
                 text = "фильтр",
                 fontSize = 14.sp,

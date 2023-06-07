@@ -51,7 +51,9 @@ private fun UserDetailInfoScreenContent() {
             item { EnterInfoItemBlock("Адрес регистрации", "Адрес регистрации") }
             item {
                 EndEditingBlock(
+                    textOnConfirm = "Применить",
                     onDismiss = { Timber.d("@@@ onDismiss") },
+                    textOnDismiss = "Отменить",
                     onConfirm = { Timber.d("@@@ onConfirm") })
             }
         }
