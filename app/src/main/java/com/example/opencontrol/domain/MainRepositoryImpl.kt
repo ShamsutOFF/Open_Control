@@ -5,6 +5,7 @@ import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.Person
 import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.ListFreeWindows
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
@@ -80,6 +81,10 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
 
     override fun getMeasuresForKno(knoId: String): Flow<ListMeasures> = flow {
         emit(baseApi.getMeasures(knoId))
+    }
+
+    override fun getFreeWindows(knoId: String): Flow<ListFreeWindows>  = flow {
+        emit(baseApi.getFreeWindows(knoId))
     }
 
     override fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork> = flow {

@@ -97,7 +97,7 @@ private fun RegistrationScreenContent(role: String) {
             navigator.push(LoginScreen(role))
         }
         RegisterButton {
-            viewModel.registerNewAccaunt(
+            viewModel.registerNewAccount(
                 UserRegisterInfoNetwork(
                     login = login,
                     password = password,

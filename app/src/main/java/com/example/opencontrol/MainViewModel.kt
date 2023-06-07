@@ -13,6 +13,8 @@ import com.example.opencontrol.model.networkDTOs.Kno
 import com.example.opencontrol.model.database.KnoDao
 import com.example.opencontrol.model.networkDTOs.Measures
 import com.example.opencontrol.model.Note
+import com.example.opencontrol.model.networkDTOs.FreeWindow
+import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +22,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.sql.Timestamp
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 class MainViewModel(
     private val repository: MainRepository,
@@ -36,6 +42,7 @@ class MainViewModel(
     var chatListOfMessages = mutableStateListOf<ChatMessage>()
     var listOfAllKnos = mutableStateListOf<Kno>()
     var measuresForKno = mutableStateListOf<Measures>()
+    var freeWindows = mutableStateListOf<FreeWindow>()
 
     init {
         Timber.d("@@@ init")
@@ -46,6 +53,21 @@ class MainViewModel(
 
     suspend fun getKnoByName(name: String): Kno? {
         return knoDao.getKnoByName(name)
+    }
+
+    fun getFreeWindows(knoId: String) {
+        viewModelScope.launch {
+            repository.getFreeWindows(knoId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    freeWindows.clear()
+                    freeWindows.addAll(it.freeWindows)
+                }
+        }
+
     }
 
     private fun downloadKnosToDatabase() {
@@ -92,9 +114,7 @@ class MainViewModel(
     }
 
     fun getAnswerFromChat(question: String) {
-        // todo add id from userId
         val questionNetwork = QuestionNetwork(id = userId, question = question, newChat = false)
-//        val questionNetwork = QuestionNetwork(id = 12345, question = question, newChat = false)
         viewModelScope.launch {
             repository.getAnswerFromChat(questionNetwork)
                 .flowOn(Dispatchers.IO)
@@ -124,20 +144,24 @@ class MainViewModel(
         return repository.getNoteById(id)
     }
 
-    fun getControlAgencies(): List<String> {
-        return repository.getControlAgencies()
-    }
-
-    fun getDepartments(): List<String> {
-        return repository.getDepartments()
-    }
-
-    fun getControlTypes(): List<String> {
-        return repository.getControlTypes()
-    }
-
-    fun getFreeTimeForRecording(count: Int): List<String> {
-        return repository.getFreeTimeForRecording(count)
+    fun getFreeTimeForSelectedDate(): List<FreeWindowInLocalDateTime> {
+        Timber.d("@@@ freeWindows = $freeWindows")
+        val freeWindowsForSelectedDate = freeWindows.toList().filter {
+            val date = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(it.appointmentTime.time),
+                ZoneId.systemDefault()
+            )
+            date.toLocalDate() == selectedDate
+        }.map {
+            FreeWindowInLocalDateTime(
+                it.id,
+                LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(it.appointmentTime.time),
+                    ZoneId.systemDefault()
+                )
+            )
+        }
+        return freeWindowsForSelectedDate
     }
 
     fun addNewNote(note: Note): Boolean {
@@ -165,7 +189,7 @@ class MainViewModel(
         }
     }
 
-    fun registerNewAccaunt(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
+    fun registerNewAccount(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
         viewModelScope.launch {
             repository.register(userRegisterInfoNetwork)
                 .flowOn(Dispatchers.IO)

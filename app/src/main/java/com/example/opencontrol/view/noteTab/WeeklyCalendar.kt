@@ -50,13 +50,13 @@ import java.util.Locale
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit) {
-    var innerSelectedDate by remember {
-        mutableStateOf(selectedDate)
-    }
+//    var innerSelectedDate by remember {
+//        mutableStateOf(selectedDate)
+//    }
     var weekOffset by remember { mutableStateOf(0) }
-    val dayOfWeek = innerSelectedDate.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+    val dayOfWeek = selectedDate.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-    val formattedDate = innerSelectedDate.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
+    val formattedDate = selectedDate.format(DateTimeFormatter.ofPattern("yy.MM.dd"))
 
     val pagerState = rememberPagerState(
         initialPage = weekOffset + Int.MAX_VALUE / 2
@@ -85,12 +85,12 @@ fun WeeklyCalendar(selectedDate: LocalDate, onDateSelected: (LocalDate) -> Unit)
         Row(Modifier.fillMaxWidth()) {
             for (i in 0..6) {
                 val currentDate = startOfWeek.plusDays(i.toLong())
-                val isSelected = currentDate == innerSelectedDate
+                val isSelected = currentDate == selectedDate
 
                 WeeklyCalendarDayCell(
                     date = currentDate,
                     isSelected = isSelected,
-                    onDateSelected = { innerSelectedDate = it }
+                    onDateSelected = { onDateSelected(it) }
                 )
             }
         }

@@ -4,6 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+data class ListKno(
+    @SerializedName("knoList")
+    val knoList: List<Kno>
+)
+
 @Entity
 data class Kno(
     @PrimaryKey
@@ -11,9 +16,4 @@ data class Kno(
     val id: Int,
     @SerializedName("name")
     val name: String
-)
-
-data class ListKno(
-    @SerializedName("knoList")
-    val knoList: List<Kno>
 )

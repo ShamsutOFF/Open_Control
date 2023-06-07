@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,14 +48,15 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
-import com.example.opencontrol.ui.theme.GreyText
+import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
 import com.example.opencontrol.ui.theme.LightColors
-import com.example.opencontrol.ui.theme.LightGreyBorder
 import com.example.opencontrol.view.EnterInfoItemBlock
 import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.SelectableItemBlock
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class NewNoteScreen : Screen {
     @Composable
@@ -74,6 +74,10 @@ private fun NewNoteContent() {
     val measuresForKno = viewModel.measuresForKno.map {
         it.name
     }
+    var selectedWindow by remember {
+        mutableStateOf(FreeWindowInLocalDateTime("", LocalDateTime.now()))
+    }
+    Timber.d("@@@ selectedWindow = $selectedWindow")
     var selectedKno by remember {
         mutableStateOf("нажмите для выбора")
     }
@@ -82,8 +86,10 @@ private fun NewNoteContent() {
     }
     LaunchedEffect(key1 = selectedKno) {
         val kno = viewModel.getKnoByName(selectedKno)
-        if (kno != null)
+        if (kno != null) {
             viewModel.getMeasuresForKno(kno.id.toString())
+            viewModel.getFreeWindows(kno.id.toString())
+        }
         selectedMeasure = "нажмите для выбора"
     }
     Column(
@@ -108,23 +114,20 @@ private fun NewNoteContent() {
                 }
             }
             item {
-                SelectableItemBlock(
-                    "Подразделение",
-                    viewModel.getDepartments(),
-                    "нажмите для выбора"
-                ) {
-                    Timber.d("@@@ selected = $it")
-                }
-            }
-            item {
                 EnterInfoItemBlock(
                     "Дополнительная информация",
                     "Введите комментарий к проверке"
                 )
             }
             item { AddPhotoItem() }
-            item { WeeklyCalendar(viewModel.selectedDate, { }) }
-            item { FreeTimeForRecording(viewModel.getFreeTimeForRecording(5).distinct()) }
+            item { AddDocItem() }
+            item { WeeklyCalendar(viewModel.selectedDate, viewModel::changeSelectedDate) }
+            item {
+                FreeTimeForRecording(
+                    viewModel.getFreeTimeForSelectedDate(),
+                    selectedWindow
+                ) { selectedWindow = it }
+            }
             item { NoteButton() }
         }
     }
@@ -163,6 +166,21 @@ private fun AddPhotoItem() {
 }
 
 @Composable
+private fun AddDocItem() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        ClickableText(
+            text = AnnotatedString("+ Добавить документ"),
+            onClick = {
+                Timber.d("@@@ Click to AddDoc")
+            })
+    }
+}
+
+@Composable
 fun ImageBox(uri: Uri, deletePhoto: (Uri) -> Unit) {
     Box(
         modifier = Modifier
@@ -193,25 +211,33 @@ fun ImageBox(uri: Uri, deletePhoto: (Uri) -> Unit) {
 }
 
 @Composable
-private fun FreeTimeForRecording(freeTimeForRecording: List<String>) {
-    var selectedTime by remember {
-        mutableStateOf("")
-    }
+private fun FreeTimeForRecording(
+    freeTimeForRecording: List<FreeWindowInLocalDateTime>,
+    selectedTime: FreeWindowInLocalDateTime,
+    onTimeSelected: (FreeWindowInLocalDateTime) -> Unit
+) {
     LazyRow() {
-        items(freeTimeForRecording) { time ->
-            SelectableTimeChip(time, time == selectedTime) { selectedTime = time }
+        items(freeTimeForRecording) { window ->
+            SelectableTimeChip(
+                window,
+//                window.appointmentTime,
+                window == selectedTime
+            ) { onTimeSelected(it) }
         }
     }
 }
 
 @Composable
 private fun SelectableTimeChip(
-    time: String,
+    time: FreeWindowInLocalDateTime,
     isSelected: Boolean,
-    onTimeSelected: (String) -> Unit
+    onTimeSelected: (FreeWindowInLocalDateTime) -> Unit
 ) {
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
     val cellWidth = (screenWidthDp - 60.dp) / 3
+    val formatter = DateTimeFormatter.ofPattern("HH:mm")
+    val formattedTime = time.appointmentTime.format(formatter)
+    val formattedPlusHour = time.appointmentTime.plusHours(1).format(formatter)
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -228,7 +254,7 @@ private fun SelectableTimeChip(
             .aspectRatio(3f)
     ) {
         Text(
-            text = time,
+            text = "$formattedTime - $formattedPlusHour",
             fontWeight = FontWeight.Bold,
             fontSize = 10.sp,
             color = if (isSelected) LightColors.onPrimary else Color.Unspecified

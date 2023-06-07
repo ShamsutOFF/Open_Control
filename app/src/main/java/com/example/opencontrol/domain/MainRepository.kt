@@ -5,6 +5,7 @@ import com.example.opencontrol.model.networkDTOs.ListKno
 import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.networkDTOs.IdNetwork
+import com.example.opencontrol.model.networkDTOs.ListFreeWindows
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +32,8 @@ interface MainRepository {
     fun getKnos(): Flow<ListKno>
 
     fun getMeasuresForKno(knoId: String): Flow<ListMeasures>
+
+    fun getFreeWindows(knoId: String): Flow<ListFreeWindows>
 
     fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork): Flow<IdNetwork>
 
