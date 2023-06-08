@@ -1,9 +1,6 @@
 package com.example.opencontrol.view.noteTab
 
-import android.net.Uri
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +20,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,8 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,21 +38,19 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
-import com.example.opencontrol.ui.theme.GreyBackground
-import com.example.opencontrol.ui.theme.GreyDivider
+import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.LightGrey
+import com.example.opencontrol.ui.theme.YellowStatus
 import com.example.opencontrol.view.EndEditingBlock
 import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.chatTab.VideoScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
-import java.time.format.DateTimeFormatter
 
 data class NoteInfoScreen(val noteId: String) : Screen {
     @Composable
@@ -72,56 +64,67 @@ private fun NoteInfoContent(noteId: String) {
     Timber.d("@@@ NoteInfo noteId = $noteId")
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<MainViewModel>()
+    val openDialog = remember { mutableStateOf(false) }
     val note = viewModel.getAppointmentById(noteId)
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
+    if (note != null) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            HeaderBlock("Информация о записи")
-            LazyColumn(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item { VideoBlock() }
-                item { NoteInfoBlock(note) }
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        ImageBoxDummy()
-                        ImageBoxDummy()
+                HeaderBlock("Информация о записи")
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    item { VideoBlock() }
+                    item { NoteInfoBlock(note) }
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            ImageBoxDummy()
+                            ImageBoxDummy()
+                        }
                     }
+                }
+                NoteStatusBlock(note)
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                EndEditingBlock(
+                    textOnDismiss = "Перенести",
+                    onDismiss = {
+                        Timber.d("@@@ Перенести")
+                        viewModel.cancelConsultation(note.id)
+                        navigator.replace(NewNoteScreen())
+                    },
+                    textOnConfirm = "Отменить",
+                    onConfirm = {
+                        openDialog.value = true
+                        Timber.d("@@@ Отменить")
+                    }
+                )
+                if (openDialog.value) {
+                    DeleteNoteDialog(onConfirm = {
+                        viewModel.cancelConsultation(note.id)
+                        openDialog.value = false
+                        navigator.pop()
+                    },
+                        onDismiss = { openDialog.value = false })
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            EndEditingBlock(
-                textOnDismiss = "Перенести",
-                onDismiss = {
-                    Timber.d("@@@ Перенести")
-                    viewModel.cancelConsultation(note.id)
-                    navigator.replace(NewNoteScreen())
-                },
-                textOnConfirm = "Отменить",
-                onConfirm = {
-                    viewModel.cancelConsultation(note.id)
-                    Timber.d("@@@ Отменить")
-                    navigator.pop()
-                }
-            )
-        }
-    }
+    } else navigator.pop()
 }
 
 @Composable
@@ -207,39 +210,37 @@ private fun ImageBoxDummy() {
 }
 
 @Composable
-private fun CancelButton(
-    deleteNote: (String) -> Boolean,
-    noteId: String
-) {
-    val navigator = LocalNavigator.currentOrThrow
-    val openDialog = remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(8.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = {
-                openDialog.value = true
-            }, shape = RoundedCornerShape(32)
-        ) {
+private fun NoteStatusBlock(note: AppointmentsInLocalDateTime) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        if (note.status == "SELECTED") {
             Text(
-                text = "Отменить запись",
-                modifier = Modifier
-                    .padding(8.dp),
+                text = "Ожидает подтверждения",
                 fontSize = 14.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Medium,
+                color = LightColors.onPrimary,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(
+                        color = YellowStatus,
+                        shape = RoundedCornerShape(50.dp)
+                    )
+                    .padding(4.dp)
+
             )
-        }
-        if (openDialog.value) {
-            DeleteNoteDialog(onConfirm = {
-                deleteNote(noteId)
-                openDialog.value = false
-                navigator.pop()
-            },
-                onDismiss = { openDialog.value = false })
+        } else {
+            Text(
+                text = "Запись подтверждена",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = LightColors.onPrimary,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(
+                        color = GreenStatus,
+                        shape = RoundedCornerShape(50.dp)
+                    )
+                    .padding(4.dp)
+            )
         }
     }
 }

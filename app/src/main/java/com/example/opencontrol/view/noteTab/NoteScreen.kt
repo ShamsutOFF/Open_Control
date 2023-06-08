@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -36,8 +37,10 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
+import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyBackground
 import com.example.opencontrol.ui.theme.LightColors
+import com.example.opencontrol.ui.theme.YellowStatus
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
@@ -69,9 +72,10 @@ private fun NoteScreenContent() {
     }
     val refreshing by remember { mutableStateOf(false) }
     val state = rememberPullRefreshState(refreshing, { viewModel.getAllAppointments() })
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .pullRefresh(state)
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(state)
     ) {
         Column(
             modifier = Modifier
@@ -160,7 +164,7 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+//            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val formatter = DateTimeFormatter.ofPattern("HH:mm")
             val formattedTime = note.time.format(formatter)
@@ -168,15 +172,44 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
 
             val formatter1 = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale("ru"))
             Text(
-                text = "$formattedTime - $formattedPlusHour",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.ExtraLight
-            )
-            Text(
                 text = note.time.format(formatter1),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.ExtraLight
             )
+            Text(
+                text = "   $formattedTime - $formattedPlusHour",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraLight
+            )
         }
+        if (note.status == "SELECTED") {
+            Text(
+                text = "Ожидает подтверждения",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = LightColors.onPrimary,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(
+                        color = YellowStatus,
+                        shape = RoundedCornerShape(50.dp)
+                    ).padding(4.dp)
+
+            )
+        } else {
+            Text(
+                text = "Запись подтверждена",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = LightColors.onPrimary,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(
+                        color = GreenStatus,
+                        shape = RoundedCornerShape(50.dp)
+                    ).padding(4.dp)
+            )
+        }
+
     }
 }

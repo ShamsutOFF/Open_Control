@@ -173,8 +173,8 @@ class MainViewModel(
             null
     }
 
-    fun getAppointmentById(id: String): AppointmentsInLocalDateTime {
-        return getAllBusinessAppointmentsInLDT().first {
+    fun getAppointmentById(id: String): AppointmentsInLocalDateTime? {
+        return getAllBusinessAppointmentsInLDT().firstOrNull() {
             it.id == id
         }
     }
