@@ -6,6 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.view.EndEditingBlock
-import com.example.opencontrol.view.EnterInfoItemBlock
+import com.example.opencontrol.view.EnterTextInfoItemBlock
 import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.SelectableItemBlock
 import org.koin.androidx.compose.getViewModel
@@ -31,6 +35,10 @@ class AddBusinessScreen : Screen {
 @Composable
 private fun AddBusinessScreenContent() {
     val viewModel = getViewModel<MainViewModel>()
+    var businessName by remember { mutableStateOf("Наименование бизнеса") }
+    var typeOfActivity by remember { mutableStateOf("Вид деятельности") }
+    var classification by remember { mutableStateOf("Классификация профиля деятельности") }
+    var legalAddress by remember { mutableStateOf("Юридический адрес") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +59,12 @@ private fun AddBusinessScreenContent() {
                     modifier = Modifier.padding(8.dp)
                 )
             }
-            item { EnterInfoItemBlock("Наименование бизнеса", "Введите название бизнеса") }
+            item { EnterTextInfoItemBlock(
+                "Наименование бизнеса",
+                "Введите название бизнеса",
+                businessName
+            ) { businessName = it }
+            }
             item {
                 SelectableItemBlock(
                     title = "Тип цифрового профиля объекта",
@@ -64,7 +77,12 @@ private fun AddBusinessScreenContent() {
                     Timber.d("@@@ selected = $it")
                 }
             }
-            item { EnterInfoItemBlock("Вид деятельности", "Введите вид деятельности") }
+            item { EnterTextInfoItemBlock(
+                "Вид деятельности",
+                "Введите вид деятельности",
+                typeOfActivity
+            ) { typeOfActivity = it }
+            }
             item {
                 SelectableItemBlock(
                     title = "Классификация объекта",
@@ -78,12 +96,18 @@ private fun AddBusinessScreenContent() {
                 }
             }
             item {
-                EnterInfoItemBlock(
+                EnterTextInfoItemBlock(
                     "Классификация профиля деятельности",
-                    "Введите классификацию"
-                )
+                    "Введите классификацию",
+                    classification
+                ) { classification = it }
             }
-            item { EnterInfoItemBlock("Юридический адрес", "Введите юридический адрес") }
+            item { EnterTextInfoItemBlock(
+                "Юридический адрес",
+                "Введите юридический адрес",
+                legalAddress
+            ) { legalAddress = it }
+            }
             item {
                 EndEditingBlock(
                     textOnConfirm = "Применить",

@@ -52,7 +52,7 @@ import coil.compose.AsyncImage
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
 import com.example.opencontrol.ui.theme.LightColors
-import com.example.opencontrol.view.EnterInfoItemBlock
+import com.example.opencontrol.view.EnterTextInfoItemBlock
 import com.example.opencontrol.view.HeaderBlock
 import com.example.opencontrol.view.SelectableItemBlock
 import org.koin.androidx.compose.getViewModel
@@ -81,6 +81,9 @@ private fun NewNoteContent() {
         mutableStateOf(FreeWindowInLocalDateTime("", LocalDateTime.now()))
     }
     Timber.d("@@@ selectedWindow = $selectedWindow")
+    var extraText by remember {
+        mutableStateOf("нажмите для выбора")
+    }
     var selectedKno by remember {
         mutableStateOf("нажмите для выбора")
     }
@@ -117,10 +120,11 @@ private fun NewNoteContent() {
                 }
             }
             item {
-                EnterInfoItemBlock(
+                EnterTextInfoItemBlock(
                     "Дополнительная информация",
-                    "Введите комментарий к проверке"
-                )
+                    "Введите комментарий к проверке",
+                    extraText
+                ) { extraText = it }
             }
             item { AddPhotoItem() }
             item { AddDocItem() }

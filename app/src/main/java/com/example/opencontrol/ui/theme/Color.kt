@@ -19,6 +19,8 @@ val ExitIconIcon = Color(0xFFDD5050)
 val ExitIconBackground = Color(0xFFFAEEEE)
 val OrangeBackground = Color(0x4FFFE0DB)
 val OrangeMainTransparent73 = Color(0xBAE35036)
+val YellowStatus = Color(0xFFFFBF41)
+val GreenStatus = Color(0xFF44C863)
 val Invisible = Color(0x0)
 
 

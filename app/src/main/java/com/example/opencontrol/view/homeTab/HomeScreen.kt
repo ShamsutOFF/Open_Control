@@ -50,6 +50,8 @@ private fun HomeScreenContent() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<MainViewModel>()
     viewModel.getAllAppointments()
+    viewModel.getUserInfo()
+    Timber.d("@@@ viewModel.userInfo = ${viewModel.userInfo}")
     Column(
         modifier = Modifier
             .fillMaxSize()

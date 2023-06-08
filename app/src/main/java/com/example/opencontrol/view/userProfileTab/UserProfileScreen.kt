@@ -17,16 +17,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,28 +67,38 @@ class UserProfileScreen : Screen {
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun UserProfileScreenContent() {
-    LazyColumn() {
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(OrangeBackground)
-                    .padding(bottom = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                UserPhotoFrame()
-                UserName("Сергей Петров")
-                EmailChip("my_email@yandex.ru")
+    val viewModel = getViewModel<MainViewModel>()
+    viewModel.getUserInfo()
+    val refreshing by remember { mutableStateOf(false) }
+    val state = rememberPullRefreshState(refreshing, { viewModel.getUserInfo() })
+
+    Box(Modifier.pullRefresh(state)) {
+        LazyColumn() {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(OrangeBackground)
+                        .padding(bottom = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    UserPhotoFrame()
+                    UserName("${viewModel.userInfo.firstName ?: ""} ${viewModel.userInfo.lastName ?: "Заполните ФИО"} ")
+                    EmailChip(viewModel.userInfo.email ?: "Заполните Email")
+                }
             }
+            item { BusinessBlock() }
+            item { ViolationsBlock() }
+            item { AddBusinessButton() }
+            item { UserDetailInfoButton() }
+            item { AccountExitButton() }
         }
-        item { BusinessBlock() }
-        item { ViolationsBlock() }
-        item { AddBusinessButton() }
-        item { UserDetailInfoButton() }
-        item { AccountExitButton() }
+        PullRefreshIndicator(refreshing, state, Modifier.align(Alignment.TopCenter))
     }
+
 }
 
 @Composable
