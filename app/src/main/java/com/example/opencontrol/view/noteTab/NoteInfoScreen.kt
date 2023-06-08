@@ -113,9 +113,10 @@ private fun NoteInfoContent(noteId: String) {
                     viewModel.cancelConsultation(note.id)
                     navigator.replace(NewNoteScreen())
                 },
-                textOnConfirm = "Применить",
+                textOnConfirm = "Отменить",
                 onConfirm = {
-                    Timber.d("@@@ Применить")
+                    viewModel.cancelConsultation(note.id)
+                    Timber.d("@@@ Отменить")
                     navigator.pop()
                 }
             )

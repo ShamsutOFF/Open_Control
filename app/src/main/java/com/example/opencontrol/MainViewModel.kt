@@ -54,6 +54,40 @@ class MainViewModel(
         getKnosFromRoom()
     }
 
+    fun getAllAppointments() {
+        Timber.d("@@@ getAllAppointments()")
+        viewModelScope.launch {
+            repository.getAllAppointments(userId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    businessAppointments.clear()
+                    businessAppointments.addAll(it.appointments)
+                }
+        }
+    }
+
+    fun getAllBusinessAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
+        Timber.d("@@@ getAllBusinessAppointmentsInLDT businessAppointments = ${businessAppointments.toList()}")
+        val appointmentsInLocalDateTime = businessAppointments.toList().map {
+            AppointmentsInLocalDateTime(
+                id = it.id,
+                time = LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(it.time.time),
+                    ZoneId.systemDefault()
+                ),
+                status = it.status,
+                knoId = it.knoId,
+                knoName = it.knoName,
+                measureId = it.measureId,
+                measureName = it.measureName
+            )
+        }
+        return appointmentsInLocalDateTime
+    }
+
     suspend fun getKnoByName(name: String): Kno? {
         return knoDao.getKnoByName(name)
     }
@@ -165,29 +199,6 @@ class MainViewModel(
         return freeWindowsForSelectedDate
     }
 
-    fun getAllBusinessAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
-        Timber.d("@@@ getAllBusinessAppointmentsInLDT businessAppointments = ${businessAppointments.toList()}")
-        val appointmentsInLocalDateTime = businessAppointments.toList().map {
-            AppointmentsInLocalDateTime(
-                id = it.id,
-                time = LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(it.time.time),
-                    ZoneId.systemDefault()
-                ),
-                status = it.status,
-                knoId = it.knoId,
-                knoName = it.knoName,
-                measureId = it.measureId,
-                measureName = it.measureName
-            )
-        }
-        return appointmentsInLocalDateTime
-    }
-
-    fun deleteNoteById(id: String): Boolean {
-        return repository.deleteNoteById(id)
-    }
-
     fun changeSelectedDate(newDate: LocalDate) {
         selectedDate = newDate
     }
@@ -238,20 +249,6 @@ class MainViewModel(
                     .collect {
                     }
             }
-        }
-    }
-
-    fun getAllAppointments() {
-        Timber.d("@@@ getAllAppointments()")
-        viewModelScope.launch {
-            repository.getAllAppointments(userId)
-                .flowOn(Dispatchers.IO)
-                .catch { ex ->
-                    Timber.e(ex)
-                }
-                .collect {
-                    businessAppointments.addAll(it.appointments)
-                }
         }
     }
 
