@@ -12,13 +12,13 @@ import com.example.opencontrol.model.ChatMessage
 import com.example.opencontrol.model.networkDTOs.Kno
 import com.example.opencontrol.model.database.KnoDao
 import com.example.opencontrol.model.networkDTOs.Measures
-import com.example.opencontrol.model.Note
 import com.example.opencontrol.model.networkDTOs.Appointments
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.model.networkDTOs.FreeWindow
 import com.example.opencontrol.model.networkDTOs.FreeWindowInLocalDateTime
 import com.example.opencontrol.model.networkDTOs.NoteInfoForConsultationNetwork
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
+import com.example.opencontrol.model.networkDTOs.UserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -35,6 +35,8 @@ class MainViewModel(
     private val knoDao: KnoDao
 ) : ViewModel() {
     var userId by mutableStateOf("")
+    var userInfo by mutableStateOf(UserInfoNetwork(userId, "", "", "", "", 0L, 0L))
+        private set
 
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
         private set
@@ -264,5 +266,37 @@ class MainViewModel(
 
                 }
         }
+    }
+
+    fun saveUserInfo(userInfoNetwork: UserInfoNetwork) {
+        Timber.d("@@@ saveUserInfo(userInfoNetwork = $userInfoNetwork)")
+        viewModelScope.launch {
+            repository.saveUserInfo(userInfoNetwork)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+
+                }
+        }
+    }
+
+    fun getUserInfo() {
+        Timber.d("@@@ getUserInfo()")
+        viewModelScope.launch {
+            repository.getUserInfo(userId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    Timber.d("@@@ getUserInfo() it = $it")
+                    Timber.d("@@@ getUserInfo() it.user = ${it.user}")
+                    userInfo = it.user
+                    Timber.d("@@@ 1getUserInfo() userInfo = $userInfo")
+                }
+        }
+        Timber.d("@@@ 2getUserInfo() userInfo = $userInfo")
     }
 }

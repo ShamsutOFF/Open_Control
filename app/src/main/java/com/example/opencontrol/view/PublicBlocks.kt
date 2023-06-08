@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.opencontrol.ui.theme.GreyCancelButton
@@ -121,7 +122,33 @@ fun SelectableItemBlock(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun EnterInfoItemBlock(title: String, label: String) {
+fun EnterTextInfoItemBlock(title: String, label: String, text: String, function: (String) -> Unit) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    Column(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+    ) {
+        Text(text = title, fontSize = 14.sp)
+        OutlinedTextField(
+            value = text,
+            label = { Text(text = label) },
+            onValueChange = { function(it) },
+            modifier = Modifier
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(32),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            })
+        )
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@Composable
+fun EnterNumberInfoItemBlock(title: String, label: String, text: Long, function: (Long) -> Unit) {
     var extraText by remember {
         mutableStateOf("")
     }
@@ -140,7 +167,7 @@ fun EnterInfoItemBlock(title: String, label: String) {
             modifier = Modifier
                 .fillMaxWidth(),
             shape = RoundedCornerShape(32),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, keyboardType =  KeyboardType.Number),
             keyboardActions = KeyboardActions(onDone = {
                 keyboardController?.hide()
                 focusManager.clearFocus()
