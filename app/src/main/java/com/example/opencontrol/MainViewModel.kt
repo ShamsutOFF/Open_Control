@@ -54,6 +54,7 @@ class MainViewModel(
     var measuresForKno = mutableStateListOf<Measures>()
     var freeWindows = mutableStateListOf<FreeWindow>()
     var businessAppointments = mutableStateListOf<Appointments>()
+    var inspectorAppointments = mutableStateListOf<Appointments>()
 
     init {
         Timber.d("@@@ init")
@@ -179,6 +180,7 @@ class MainViewModel(
     }
 
     fun getNearestAppointment(): AppointmentsInLocalDateTime? {
+        Timber.d("@@@ getNearestAppointment()")
         val notes = getAllBusinessAppointmentsInLDT().sortedBy { it.time }
         val nearestIndex = notes.indexOfFirst { it.time >= LocalDateTime.now() }
         return if (nearestIndex != -1)
@@ -188,6 +190,7 @@ class MainViewModel(
     }
 
     fun getAppointmentById(id: String): AppointmentsInLocalDateTime? {
+        Timber.d("@@@ getAppointmentById(id = $id)")
         return getAllBusinessAppointmentsInLDT().firstOrNull() {
             it.id == id
         }
@@ -343,13 +346,42 @@ class MainViewModel(
                     Timber.e(ex)
                 }
                 .collect {
-                    Timber.d("@@@ getInspectorUserInfo() it = $it")
-                    Timber.d("@@@ getInspectorUserInfo() it.user = ${it.user}")
                     inspectorUserInfo = it.user
                     inspectorKnoId = it.user.knoId ?: 0
-                    Timber.d("@@@ getInspectorUserInfo() inspectorUserInfo = $inspectorUserInfo")
                 }
         }
-        Timber.d("@@@ getInspectorUserInfo() userInfo = $inspectorUserInfo")
+    }
+
+    fun getAllInspectorAppointments() {
+        Timber.d("@@@@@ getAllInspectorAppointments()")
+        viewModelScope.launch {
+            repository.getAllInspectorAppointments(inspectorKnoId,userId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    inspectorAppointments.clear()
+                    inspectorAppointments.addAll(it.appointments)
+                }
+        }
+    }
+    fun getAllInspectorAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
+        Timber.d("@@@ getAllInspectorAppointmentsInLDT inspectorAppointments = ${inspectorAppointments.toList()}")
+        val appointmentsInLocalDateTime = inspectorAppointments.toList().map {
+            AppointmentsInLocalDateTime(
+                id = it.id,
+                time = LocalDateTime.ofInstant(
+                    Instant.ofEpochMilli(it.time.time),
+                    ZoneId.systemDefault()
+                ),
+                status = it.status,
+                knoId = it.knoId,
+                knoName = it.knoName,
+                measureId = it.measureId,
+                measureName = it.measureName
+            )
+        }
+        return appointmentsInLocalDateTime
     }
 }

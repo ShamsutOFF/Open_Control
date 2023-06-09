@@ -88,4 +88,11 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
         flow{
         emit(baseApi.getInspectorUserInfo(userId))
     }
+
+    override fun getAllInspectorAppointments(
+        inspectorKnoId: Int,
+        userId: String
+    ): Flow<ListAppointments> = flow{
+        emit(baseApi.getAllInspectorAppointments(inspectorKnoId,userId))
+    }
 }

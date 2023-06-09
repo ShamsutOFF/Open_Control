@@ -41,4 +41,6 @@ interface MainRepository {
     fun saveInspectorUserInfo(inspectorUserInfoNetwork: InspectorUserInfoNetwork): Flow<Unit>
 
     fun getInspectorUserInfo(userId: String): Flow<BaseInspectorUserInfoNetwork>
+
+    fun getAllInspectorAppointments(inspectorKnoId: Int, userId: String): Flow<ListAppointments>
 }

@@ -72,8 +72,8 @@ interface BaseApi {
 
     //получение списка всех записей инспектора-пользователя
 //    /inspection-user/appointments?knoId=1&inspectorId=87a07fa8-bfdb-4718-8e03-44697b857baf'
-    @GET("/inspection-user/appointments?knoId=1&inspectorId=87a07fa8-bfdb-4718-8e03-44697b857baf'")
-    suspend fun getAllInspectorAppointments(@Query("knoId") knoId: String, inspectorId: String): ListAppointments
+    @GET("/inspection-user/appointments")
+    suspend fun getAllInspectorAppointments(@Query("knoId") knoId: Int, @Query("inspectorId") inspectorId: String): ListAppointments
 
 
     @POST("/user/role")

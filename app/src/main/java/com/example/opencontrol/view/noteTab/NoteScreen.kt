@@ -60,32 +60,45 @@ class NoteScreen : Screen {
 private fun NoteScreenContent() {
     Timber.d("@@@ NoteScreenContent()")
     val viewModel = getViewModel<MainViewModel>()
-    val businessAppointments = viewModel.getAllBusinessAppointmentsInLDT()
-    val listState = rememberLazyListState()
-    val selectedIndex =
-        businessAppointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
-    val scrollPosition =
-        selectedIndex.takeIf { it != -1 } ?: businessAppointments.lastIndex.takeIf { it != -1 } ?: 0
 
-    LaunchedEffect(key1 = viewModel.selectedDate) {
-        Timber.d("@@@ scrollPosition = $scrollPosition")
-        listState.animateScrollToItem(index = scrollPosition)
-    }
     val refreshing by remember { mutableStateOf(false) }
-    if (viewModel.userRole == UserRole.BUSINESS) {
-        viewModel.getAllBusinessAppointments()
-        viewModel.getBusinessUserInfo()
-    } else {
-        viewModel.getInspectorUserInfo()
-    }
     val state = rememberPullRefreshState(refreshing, {
         if (viewModel.userRole == UserRole.BUSINESS) {
             viewModel.getAllBusinessAppointments()
             viewModel.getBusinessUserInfo()
         } else {
             viewModel.getInspectorUserInfo()
+            viewModel.getAllInspectorAppointments()
         }
     })
+    val appointments =
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            Timber.d("@@@ NoteScreenContent() viewModel.getAllBusinessAppointmentsInLDT()")
+            viewModel.getAllBusinessAppointmentsInLDT()
+        } else {
+            Timber.d("@@@ NoteScreenContent() viewModel.getAllInspectorAppointmentsInLDT()")
+            viewModel.getAllInspectorAppointmentsInLDT()
+        }
+    val listState = rememberLazyListState()
+    val selectedIndex =
+        appointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
+    val scrollPosition =
+        selectedIndex.takeIf { it != -1 } ?: appointments.lastIndex.takeIf { it != -1 } ?: 0
+
+    LaunchedEffect(key1 = true){
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            viewModel.getAllBusinessAppointments()
+            viewModel.getBusinessUserInfo()
+        } else {
+            viewModel.getInspectorUserInfo()
+            viewModel.getAllInspectorAppointments()
+        }
+    }
+    LaunchedEffect(key1 = viewModel.selectedDate) {
+        Timber.d("@@@ scrollPosition = $scrollPosition")
+        listState.animateScrollToItem(index = scrollPosition)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -97,12 +110,12 @@ private fun NoteScreenContent() {
         ) {
             MonthlyCalendar(
                 selectedDate = viewModel.selectedDate,
-                markedDateList = businessAppointments.map { it.time.toLocalDate() },
+                markedDateList = appointments.map { it.time.toLocalDate() },
                 onDateSelected = viewModel::changeSelectedDate
             )
             MyNotesAndButtonsRow()
             LazyColumn(state = listState) {
-                items(businessAppointments) { note ->
+                items(appointments) { note ->
                     NoteCard(note = note)
                 }
             }
