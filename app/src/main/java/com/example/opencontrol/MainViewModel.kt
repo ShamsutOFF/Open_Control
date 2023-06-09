@@ -1,11 +1,15 @@
 package com.example.opencontrol
 
+import android.app.Application
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.opencontrol.domain.MainRepository
 import com.example.opencontrol.model.ChatMessage
@@ -34,9 +38,18 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 
 class MainViewModel(
+    context: Application,
     private val repository: MainRepository,
     private val knoDao: KnoDao
-) : ViewModel() {
+) : AndroidViewModel(context) {
+    companion object {
+        val USERID_TAG = "user_id"
+        val START_MESSAGE = ChatMessage(
+            "Здравствуйте! Я бот-помощник. Чем могу помочь?",
+            false
+        )
+    }
+
     var userId by mutableStateOf("")
     var userRole by mutableStateOf(UserRole.BUSINESS)
     var inspectorKnoId by mutableStateOf(0)
@@ -57,9 +70,13 @@ class MainViewModel(
     var businessAppointments = mutableStateListOf<Appointments>()
     var inspectorAppointments = mutableStateListOf<Appointments>()
 
+    //save creds
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+    private val sharedPreferencesEditor: SharedPreferences.Editor = sharedPreferences.edit()
+
     init {
         Timber.d("@@@ init")
-        chatListOfMessages.add(ChatMessage("Здравствуйте! Я бот-помощник. Чем могу помочь?", false))
+        chatListOfMessages.add(START_MESSAGE)
         downloadKnosToDatabase()
         getKnosFromRoom()
     }
@@ -180,6 +197,11 @@ class MainViewModel(
         }
     }
 
+    fun completeBotConsultation() {
+        chatListOfMessages.clear()
+        chatListOfMessages.add(START_MESSAGE)
+    }
+
     fun getNearestAppointment(): AppointmentsInLocalDateTime? {
         Timber.d("@@@ getNearestAppointment()")
         val notes = getAllBusinessAppointmentsInLDT().sortedBy { it.time }
@@ -221,18 +243,25 @@ class MainViewModel(
         selectedDate = newDate
     }
 
+
     fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
-        viewModelScope.launch {
-            repository.login(userRegisterInfoNetwork)
-                .flowOn(Dispatchers.IO)
-                .catch { ex ->
-                    Timber.e(ex)
-                }
-                .collect {
-                    userId = it.id
-                }
-        }
+            viewModelScope.launch {
+                repository.login(userRegisterInfoNetwork)
+                    .flowOn(Dispatchers.IO)
+                    .catch { ex ->
+                        Timber.e(ex)
+                    }
+                    .collect {
+                        userId = it.id
+                        sharedPreferencesEditor.putString(USERID_TAG, userId)
+                    }
+            }
     }
+
+    fun loggedIn() = sharedPreferences.contains(USERID_TAG).also {
+        if (it) userId = sharedPreferences.getString(USERID_TAG, null)!!
+    }
+
 
     fun registerNewAccount(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
         viewModelScope.launch {
@@ -243,6 +272,7 @@ class MainViewModel(
                 }
                 .collect {
                     userId = it.id
+                    sharedPreferencesEditor.putString(USERID_TAG, userId)
                 }
         }
     }

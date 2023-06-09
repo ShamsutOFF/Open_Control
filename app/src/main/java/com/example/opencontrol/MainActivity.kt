@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.example.opencontrol.ui.theme.OpenControlTheme
+import com.example.opencontrol.view.MainScreen
 import com.example.opencontrol.view.enterScreen.EnterScreen
+import org.koin.androidx.compose.getViewModel
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
@@ -26,7 +28,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigator(screen = EnterScreen()) { navigator ->
+                    val modelView = getViewModel<MainViewModel>()
+                    val startScreen = if (modelView.loggedIn()) {
+                        MainScreen
+                    } else {
+                        EnterScreen()
+                    }
+                    Navigator(screen = startScreen) { navigator ->
                         SlideTransition(navigator = navigator) {
                             it.Content()
                         }

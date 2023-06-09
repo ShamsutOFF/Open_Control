@@ -66,5 +66,5 @@ val appModule = module {
         MainRepositoryImpl(get(), get())
     }
 
-    single { MainViewModel(get(), get()) }
+    single { MainViewModel(get(), get(), get()) }
 }
