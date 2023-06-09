@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +29,6 @@ import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.ui.theme.md_theme_light_onPrimary
 import com.example.opencontrol.ui.theme.md_theme_light_primary
-import timber.log.Timber
 
 class EnterScreen : Screen {
     @Composable
@@ -63,7 +61,7 @@ private fun EnterScreenContent() {
                     .clip(RoundedCornerShape(12))
                     .background(md_theme_light_primary)
                     .clickable {
-                        navigator.push(LoginScreen(UserRole.BUSINESS.name))
+                        navigator.push(LoginScreen(UserRole.BUSINESS))
                     }
                     .weight(1f),
                     text = "КАК БИЗНЕС")
@@ -74,7 +72,7 @@ private fun EnterScreenContent() {
                     .clip(RoundedCornerShape(12))
                     .background(md_theme_light_primary)
                     .clickable {
-                        navigator.push(LoginScreen(UserRole.INSPECTION.name))
+                        navigator.push(LoginScreen(UserRole.INSPECTION))
                     }
                     .weight(1f),
                     text = "КАК ИНСПЕКТОР")

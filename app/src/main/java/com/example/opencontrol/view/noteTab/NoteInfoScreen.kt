@@ -40,6 +40,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyText
@@ -65,6 +66,7 @@ private fun NoteInfoContent(noteId: String) {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<MainViewModel>()
     val openDialog = remember { mutableStateOf(false) }
+
     val note = viewModel.getAppointmentById(noteId)
     if (note != null) {
         Column(
@@ -101,27 +103,51 @@ private fun NoteInfoContent(noteId: String) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
-                EndEditingBlock(
-                    textOnDismiss = "Перенести",
-                    onDismiss = {
-                        Timber.d("@@@ Перенести")
-                        viewModel.cancelConsultation(note.id)
-                        navigator.replace(NewNoteScreen())
-                    },
-                    textOnConfirm = "Отменить",
-                    onConfirm = {
-                        openDialog.value = true
-                        Timber.d("@@@ Отменить")
+                if (viewModel.userRole == UserRole.BUSINESS){
+                    EndEditingBlock(
+                        textOnDismiss = "Перенести",
+                        onDismiss = {
+                            Timber.d("@@@ Перенести")
+                            viewModel.cancelConsultation(note.id)
+                            navigator.replace(NewNoteScreen())
+                        },
+                        textOnConfirm = "Отменить",
+                        onConfirm = {
+                            openDialog.value = true
+                            Timber.d("@@@ Отменить")
+                        }
+                    )
+                    if (openDialog.value) {
+                        DeleteNoteDialog(onConfirm = {
+                            viewModel.cancelConsultation(note.id)
+                            openDialog.value = false
+                            navigator.pop()
+                        },
+                            onDismiss = { openDialog.value = false })
                     }
-                )
-                if (openDialog.value) {
-                    DeleteNoteDialog(onConfirm = {
-                        viewModel.cancelConsultation(note.id)
-                        openDialog.value = false
-                        navigator.pop()
-                    },
-                        onDismiss = { openDialog.value = false })
+                } else {
+                    EndEditingBlock(
+                        textOnDismiss = "Отменить",
+                        onDismiss = {
+                            openDialog.value = true
+                            viewModel.cancelConsultation(note.id)
+                        },
+                        textOnConfirm = "Подтвердить",
+                        onConfirm = {
+                            Timber.d("@@@ Подтвердить")
+                            viewModel.agreeAppointment(noteId)
+                        }
+                    )
+                    if (openDialog.value) {
+                        DeleteNoteDialog(onConfirm = {
+                            viewModel.cancelConsultation(note.id)
+                            openDialog.value = false
+                            navigator.pop()
+                        },
+                            onDismiss = { openDialog.value = false })
+                    }
                 }
+
             }
         }
     } else navigator.pop()

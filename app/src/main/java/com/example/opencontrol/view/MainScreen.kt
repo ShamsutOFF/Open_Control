@@ -17,18 +17,28 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.ui.theme.SelectedTab
 import com.example.opencontrol.ui.theme.UnSelectedTab
 import com.example.opencontrol.view.chatTab.ChatTab
 import com.example.opencontrol.view.homeTab.HomeTab
 import com.example.opencontrol.view.noteTab.NoteTab
 import com.example.opencontrol.view.userProfileTab.UserProfileTab
+import org.koin.androidx.compose.getViewModel
+import timber.log.Timber
 
-object MainScreen : Screen {
+data class MainScreen(val role: UserRole) : Screen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        TabNavigator(HomeTab) {
+        Timber.d("@@@ Content role = $role")
+        val viewModel = getViewModel<MainViewModel>()
+        viewModel.userRole = role
+        TabNavigator(
+            if (role == UserRole.BUSINESS) HomeTab
+            else NoteTab
+        ) {
             Scaffold(
                 content = {
                     Box(
@@ -41,10 +51,16 @@ object MainScreen : Screen {
                 },
                 bottomBar = {
                     BottomNavigation(backgroundColor = Color.White) {
-                        TabNavigationItem(HomeTab)
-                        TabNavigationItem(NoteTab)
-                        TabNavigationItem(ChatTab)
-                        TabNavigationItem(UserProfileTab)
+                        if (role == UserRole.BUSINESS) {
+                            TabNavigationItem(HomeTab)
+                            TabNavigationItem(NoteTab)
+                            TabNavigationItem(ChatTab)
+                            TabNavigationItem(UserProfileTab)
+                        } else {
+                            TabNavigationItem(NoteTab)
+                            TabNavigationItem(UserProfileTab)
+                        }
+
                     }
                 }
             )

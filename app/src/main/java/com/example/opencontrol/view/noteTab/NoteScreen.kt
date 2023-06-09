@@ -36,6 +36,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyBackground
@@ -59,19 +60,45 @@ class NoteScreen : Screen {
 private fun NoteScreenContent() {
     Timber.d("@@@ NoteScreenContent()")
     val viewModel = getViewModel<MainViewModel>()
-    val businessAppointments = viewModel.getAllBusinessAppointmentsInLDT()
+
+    val refreshing by remember { mutableStateOf(false) }
+    val state = rememberPullRefreshState(refreshing, {
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            viewModel.getAllBusinessAppointments()
+            viewModel.getBusinessUserInfo()
+        } else {
+            viewModel.getInspectorUserInfo()
+            viewModel.getAllInspectorAppointments()
+        }
+    })
+    val appointments =
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            Timber.d("@@@ NoteScreenContent() viewModel.getAllBusinessAppointmentsInLDT()")
+            viewModel.getAllBusinessAppointmentsInLDT()
+        } else {
+            Timber.d("@@@ NoteScreenContent() viewModel.getAllInspectorAppointmentsInLDT()")
+            viewModel.getAllInspectorAppointmentsInLDT()
+        }
     val listState = rememberLazyListState()
     val selectedIndex =
-        businessAppointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
+        appointments.indexOfFirst { it.time.toLocalDate() >= viewModel.selectedDate }
     val scrollPosition =
-        selectedIndex.takeIf { it != -1 } ?: businessAppointments.lastIndex.takeIf { it != -1 } ?: 0
+        selectedIndex.takeIf { it != -1 } ?: appointments.lastIndex.takeIf { it != -1 } ?: 0
 
+    LaunchedEffect(key1 = true){
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            viewModel.getAllBusinessAppointments()
+            viewModel.getBusinessUserInfo()
+        } else {
+            viewModel.getInspectorUserInfo()
+            viewModel.getAllInspectorAppointments()
+        }
+    }
     LaunchedEffect(key1 = viewModel.selectedDate) {
         Timber.d("@@@ scrollPosition = $scrollPosition")
         listState.animateScrollToItem(index = scrollPosition)
     }
-    val refreshing by remember { mutableStateOf(false) }
-    val state = rememberPullRefreshState(refreshing, { viewModel.getAllAppointments() })
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -83,12 +110,12 @@ private fun NoteScreenContent() {
         ) {
             MonthlyCalendar(
                 selectedDate = viewModel.selectedDate,
-                markedDateList = businessAppointments.map { it.time.toLocalDate() },
+                markedDateList = appointments.map { it.time.toLocalDate() },
                 onDateSelected = viewModel::changeSelectedDate
             )
             MyNotesAndButtonsRow()
             LazyColumn(state = listState) {
-                items(businessAppointments) { note ->
+                items(appointments) { note ->
                     NoteCard(note = note)
                 }
             }
@@ -101,6 +128,7 @@ private fun NoteScreenContent() {
 private fun MyNotesAndButtonsRow() {
     val navigator = LocalNavigator.currentOrThrow
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
+    val viewModel = getViewModel<MainViewModel>()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,12 +141,14 @@ private fun MyNotesAndButtonsRow() {
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal
         )
-        Button(onClick = { navigator.push(NewNoteScreen()) }) {
-            Text(
-                text = "новая запись",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal
-            )
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            Button(onClick = { navigator.push(NewNoteScreen()) }) {
+                Text(
+                    text = "новая запись",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
         }
         Button(onClick = { bottomSheetNavigator.show(FilterBottomSheet()) }) {
             Text(
@@ -193,7 +223,8 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
                     .background(
                         color = YellowStatus,
                         shape = RoundedCornerShape(50.dp)
-                    ).padding(4.dp)
+                    )
+                    .padding(4.dp)
 
             )
         } else {
@@ -207,7 +238,8 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
                     .background(
                         color = GreenStatus,
                         shape = RoundedCornerShape(50.dp)
-                    ).padding(4.dp)
+                    )
+                    .padding(4.dp)
             )
         }
 
