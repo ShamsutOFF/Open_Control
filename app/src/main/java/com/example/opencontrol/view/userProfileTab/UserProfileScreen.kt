@@ -26,10 +26,12 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -360,6 +362,7 @@ private fun UserDetailInfoButton() {
 
 @Composable
 private fun AccountExitButton() {
+    val openDialog = remember { mutableStateOf(false) }
     val viewModel = getViewModel<MainViewModel>()
     val navigator = LocalNavigator.currentOrThrow
     val screenWidthDp = LocalConfiguration.current.screenWidthDp.dp
@@ -369,10 +372,17 @@ private fun AccountExitButton() {
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .fillMaxWidth()
             .clickable {
-                viewModel.clearUser()
-                navigator.popUntilRoot()
+                openDialog.value = true
             }
     ) {
+        if (openDialog.value) {
+            ExitDialog(onConfirm = {
+                viewModel.clearUser()
+                navigator.popUntilRoot()
+                openDialog.value = false
+            },
+                onDismiss = { openDialog.value = false })
+        }
         Box(
             modifier = Modifier
                 .padding(4.dp)
@@ -398,4 +408,26 @@ private fun AccountExitButton() {
             Icon(Icons.Filled.KeyboardArrowRight, null)
         }
     }
+}
+
+@Composable
+private fun ExitDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Выйти из аккаунта?") },
+        text = { Text("Вы действительно хотите выйти из аккаунта?") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Да")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Нет")
+            }
+        }
+    )
 }
