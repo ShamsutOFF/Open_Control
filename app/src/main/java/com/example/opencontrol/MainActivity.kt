@@ -28,13 +28,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val modelView = getViewModel<MainViewModel>()
-                    val startScreen = if (modelView.loggedIn()) {
-                        MainScreen
-                    } else {
-                        EnterScreen()
-                    }
-                    Navigator(screen = startScreen) { navigator ->
+//                    val modelView = getViewModel<MainViewModel>()
+//                    val startScreen = if (modelView.loggedIn()) {
+//                        MainScreen
+//                    } else {
+//                        EnterScreen()
+//                    }
+//                    Navigator(screen = startScreen) { navigator ->
+                    Navigator(screen = EnterScreen()) { navigator ->
                         SlideTransition(navigator = navigator) {
                             it.Content()
                         }
