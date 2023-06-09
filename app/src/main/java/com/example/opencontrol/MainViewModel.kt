@@ -184,7 +184,8 @@ class MainViewModel(
     }
 
     fun completeBotConsultation() {
-        chatListOfMessages = mutableStateListOf(START_MESSAGE)
+        chatListOfMessages.clear()
+        chatListOfMessages.add(START_MESSAGE)
     }
 
     fun getNearestAppointment(): AppointmentsInLocalDateTime? {
