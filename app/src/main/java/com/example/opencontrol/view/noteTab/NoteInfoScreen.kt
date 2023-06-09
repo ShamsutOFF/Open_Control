@@ -135,7 +135,7 @@ private fun NoteInfoContent(noteId: String) {
                         textOnConfirm = "Подтвердить",
                         onConfirm = {
                             Timber.d("@@@ Подтвердить")
-                            //TODO вот тут Апи подверждения
+                            viewModel.agreeAppointment(noteId)
                         }
                     )
                     if (openDialog.value) {

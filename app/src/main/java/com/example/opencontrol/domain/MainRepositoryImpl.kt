@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.AppointmentId
 import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.BaseInspectorUserInfoNetwork
@@ -94,5 +95,9 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
         userId: String
     ): Flow<ListAppointments> = flow{
         emit(baseApi.getAllInspectorAppointments(inspectorKnoId,userId))
+    }
+
+    override fun agreeAppointment(agreeNoteInfoNetwork: AgreeNoteInfoNetwork): Flow<Unit> = flow{
+        emit(baseApi.agreeAppointment(agreeNoteInfoNetwork))
     }
 }

@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.AnswerNetwork
 import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.BaseInspectorUserInfoNetwork
@@ -43,4 +44,6 @@ interface MainRepository {
     fun getInspectorUserInfo(userId: String): Flow<BaseInspectorUserInfoNetwork>
 
     fun getAllInspectorAppointments(inspectorKnoId: Int, userId: String): Flow<ListAppointments>
+
+    fun agreeAppointment( agreeNoteInfoNetwork: AgreeNoteInfoNetwork): Flow<Unit>
 }

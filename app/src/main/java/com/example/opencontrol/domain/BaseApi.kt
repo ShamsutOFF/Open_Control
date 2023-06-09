@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.AppointmentId
 import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.BaseInspectorUserInfoNetwork
@@ -44,7 +45,6 @@ interface BaseApi {
     @PUT("/business-user/appointments/select")
     suspend fun signUpToConsultation(@Body noteInfoForConsultationNetwork: NoteInfoForConsultationNetwork)
 
-
     //Добавление расширенной информации о пользователе
     @POST("/business-user/info")
     suspend fun addBusinessUserInfo(@Body userInfo: BusinessUserInfoNetwork)
@@ -62,7 +62,7 @@ interface BaseApi {
     suspend fun login(@Body user: UserRegisterInfoNetwork): IdNetwork
 
 
-    //Добавление расширенной информации о пользователе
+    //Добавление расширенной информации о инспекторе
     @POST("/inspection-user/info")
     suspend fun addInspectorUserInfo(@Body userInfo: InspectorUserInfoNetwork)
 
@@ -71,10 +71,12 @@ interface BaseApi {
     suspend fun getInspectorUserInfo(@Query("userId") userId: String): BaseInspectorUserInfoNetwork
 
     //получение списка всех записей инспектора-пользователя
-//    /inspection-user/appointments?knoId=1&inspectorId=87a07fa8-bfdb-4718-8e03-44697b857baf'
     @GET("/inspection-user/appointments")
     suspend fun getAllInspectorAppointments(@Query("knoId") knoId: Int, @Query("inspectorId") inspectorId: String): ListAppointments
 
+    //Подтверждение записи от инспекторе
+    @PUT("/inspection-user/appointments/agree")
+    suspend fun agreeAppointment(@Body agreeNoteInfoNetwork: AgreeNoteInfoNetwork)
 
     @POST("/user/role")
     suspend fun getRole(@Query("userId") userId: String): String

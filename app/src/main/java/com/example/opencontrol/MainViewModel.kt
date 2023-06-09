@@ -12,6 +12,7 @@ import com.example.opencontrol.model.ChatMessage
 import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.Kno
 import com.example.opencontrol.model.database.KnoDao
+import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.Measures
 import com.example.opencontrol.model.networkDTOs.Appointments
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
@@ -383,5 +384,19 @@ class MainViewModel(
             )
         }
         return appointmentsInLocalDateTime
+    }
+
+    fun agreeAppointment(appointmentId:String) {
+        Timber.d("@@@@@ getAllInspectorAppointments()")
+        viewModelScope.launch {
+            repository.agreeAppointment(AgreeNoteInfoNetwork(userId, appointmentId))
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+
+                }
+        }
     }
 }
