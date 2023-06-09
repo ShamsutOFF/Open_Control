@@ -2,7 +2,7 @@ package com.example.opencontrol.model.networkDTOs
 
 import com.google.gson.annotations.SerializedName
 
-data class UserInfoNetwork(
+data class BusinessUserInfoNetwork(
     @SerializedName("userId")
     val userId: String?,
     @SerializedName("email")
@@ -18,6 +18,6 @@ data class UserInfoNetwork(
     @SerializedName("snils")
     val snils: Long?
 )
-data class BaseUserInfoNetwork (
-    @SerializedName("user") val user: UserInfoNetwork
+data class BaseBusinessUserInfoNetwork (
+    @SerializedName("user") val user: BusinessUserInfoNetwork
 )

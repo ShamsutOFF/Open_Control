@@ -28,6 +28,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.OrangeBackground
 import com.example.opencontrol.view.enterScreen.MoscowLogo
@@ -49,9 +50,14 @@ class HomeScreen : Screen {
 private fun HomeScreenContent() {
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<MainViewModel>()
-    viewModel.getAllAppointments()
-    viewModel.getUserInfo()
-    Timber.d("@@@ viewModel.userInfo = ${viewModel.userInfo}")
+
+    if (viewModel.userRole == UserRole.BUSINESS) {
+        viewModel.getAllBusinessAppointments()
+        viewModel.getBusinessUserInfo()
+    } else {
+        viewModel.getInspectorUserInfo()
+    }
+    Timber.d("@@@ viewModel.userInfo = ${viewModel.businessUserInfo}")
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -84,7 +90,11 @@ private fun HomeScreenContent() {
                     val formatterTime = DateTimeFormatter.ofPattern("HH:mm")
                     Timber.d("@@@ nearestNote = $nearestNote")
                     val text = if (nearestNote != null)
-                        "Ближайшая запись: ${nearestNote.time.format(formatterDate)} ${nearestNote.time.format(formatterTime)}"
+                        "Ближайшая запись: ${nearestNote.time.format(formatterDate)} ${
+                            nearestNote.time.format(
+                                formatterTime
+                            )
+                        }"
                     else "Нет ближайших записей"
                     WidgetButton(text = text,
                         modifier = Modifier

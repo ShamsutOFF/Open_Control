@@ -19,7 +19,7 @@ interface KnoDao {
     fun getAllKno(): Flow<List<Kno>>
 
     @Query("SELECT * FROM Kno WHERE id = :knoId")
-    fun getKnoById(knoId: Int): Flow<Kno?>
+    suspend fun getKnoById(knoId: Int): Kno?
 
     @Query("SELECT * FROM Kno WHERE name = :knoName")
     suspend fun getKnoByName(knoName: String): Kno?

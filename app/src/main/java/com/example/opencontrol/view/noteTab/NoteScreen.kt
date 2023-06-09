@@ -36,6 +36,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
 import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyBackground
@@ -71,7 +72,20 @@ private fun NoteScreenContent() {
         listState.animateScrollToItem(index = scrollPosition)
     }
     val refreshing by remember { mutableStateOf(false) }
-    val state = rememberPullRefreshState(refreshing, { viewModel.getAllAppointments() })
+    if (viewModel.userRole == UserRole.BUSINESS) {
+        viewModel.getAllBusinessAppointments()
+        viewModel.getBusinessUserInfo()
+    } else {
+        viewModel.getInspectorUserInfo()
+    }
+    val state = rememberPullRefreshState(refreshing, {
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            viewModel.getAllBusinessAppointments()
+            viewModel.getBusinessUserInfo()
+        } else {
+            viewModel.getInspectorUserInfo()
+        }
+    })
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -101,6 +115,7 @@ private fun NoteScreenContent() {
 private fun MyNotesAndButtonsRow() {
     val navigator = LocalNavigator.currentOrThrow
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
+    val viewModel = getViewModel<MainViewModel>()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -113,12 +128,14 @@ private fun MyNotesAndButtonsRow() {
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal
         )
-        Button(onClick = { navigator.push(NewNoteScreen()) }) {
-            Text(
-                text = "новая запись",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Normal
-            )
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            Button(onClick = { navigator.push(NewNoteScreen()) }) {
+                Text(
+                    text = "новая запись",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal
+                )
+            }
         }
         Button(onClick = { bottomSheetNavigator.show(FilterBottomSheet()) }) {
             Text(
@@ -193,7 +210,8 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
                     .background(
                         color = YellowStatus,
                         shape = RoundedCornerShape(50.dp)
-                    ).padding(4.dp)
+                    )
+                    .padding(4.dp)
 
             )
         } else {
@@ -207,7 +225,8 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
                     .background(
                         color = GreenStatus,
                         shape = RoundedCornerShape(50.dp)
-                    ).padding(4.dp)
+                    )
+                    .padding(4.dp)
             )
         }
 

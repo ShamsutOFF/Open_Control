@@ -47,6 +47,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
@@ -55,7 +56,7 @@ import com.example.opencontrol.view.MainScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-data class RegistrationScreen(val role: String) : Screen {
+data class RegistrationScreen(val role: UserRole) : Screen {
     @Composable
     override fun Content() {
         RegistrationScreenContent(role)
@@ -64,7 +65,7 @@ data class RegistrationScreen(val role: String) : Screen {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun RegistrationScreenContent(role: String) {
+private fun RegistrationScreenContent(role: UserRole) {
     Timber.d("@@@ Регистрируемся как $role")
     val viewModel = getViewModel<MainViewModel>()
     val navigator = LocalNavigator.currentOrThrow
@@ -101,12 +102,12 @@ private fun RegistrationScreenContent(role: String) {
                 UserRegisterInfoNetwork(
                     login = login,
                     password = password,
-                    role = role
+                    role = role.name
                 )
             )
         }
         if (viewModel.userId.isNotEmpty()) {
-            navigator.push(MainScreen)
+            navigator.push(MainScreen(role))
         }
     }
 }

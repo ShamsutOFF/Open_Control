@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,11 +15,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
-import com.example.opencontrol.model.networkDTOs.UserInfoNetwork
+import com.example.opencontrol.model.UserRole
+import com.example.opencontrol.model.networkDTOs.BusinessUserInfoNetwork
+import com.example.opencontrol.model.networkDTOs.InspectorUserInfoNetwork
 import com.example.opencontrol.view.EndEditingBlock
 import com.example.opencontrol.view.EnterNumberInfoItemBlock
 import com.example.opencontrol.view.EnterTextInfoItemBlock
 import com.example.opencontrol.view.HeaderBlock
+import com.example.opencontrol.view.SelectableItemBlock
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
@@ -32,14 +36,75 @@ class UserDetailInfoScreen : Screen {
 @Composable
 private fun UserDetailInfoScreenContent() {
     val viewModel = getViewModel<MainViewModel>()
-    viewModel.getUserInfo()
+
+    if (viewModel.userRole == UserRole.BUSINESS) {
+        viewModel.getBusinessUserInfo()
+    } else {
+        viewModel.getInspectorUserInfo()
+    }
+
     val navigator = LocalNavigator.currentOrThrow
-    var lastName by remember { mutableStateOf(viewModel.userInfo.lastName ?: "") }
-    var firstName by remember { mutableStateOf(viewModel.userInfo.firstName ?: "") }
-    var surName by remember { mutableStateOf(viewModel.userInfo.surName ?: "") }
-    var email by remember { mutableStateOf(viewModel.userInfo.email ?: "") }
-    var inn by remember { mutableStateOf(viewModel.userInfo.inn ?: 0L) }
-    var snils by remember { mutableStateOf(viewModel.userInfo.snils ?: 0L) }
+
+    var lastName by remember {
+        mutableStateOf(
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                viewModel.businessUserInfo.lastName ?: ""
+            } else {
+                viewModel.inspectorUserInfo.lastName ?: ""
+            }
+        )
+    }
+    var firstName by remember {
+        mutableStateOf(
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                viewModel.businessUserInfo.firstName ?: ""
+            } else {
+                viewModel.inspectorUserInfo.firstName ?: ""
+            }
+        )
+    }
+    var surName by remember {
+        mutableStateOf(
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                viewModel.businessUserInfo.surName ?: ""
+            } else {
+                viewModel.inspectorUserInfo.surName ?: ""
+            }
+        )
+    }
+    var email by remember {
+        mutableStateOf(
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                viewModel.businessUserInfo.email ?: ""
+            } else {
+                viewModel.inspectorUserInfo.email ?: ""
+            }
+        )
+    }
+
+    var inn by remember { mutableStateOf(viewModel.businessUserInfo.inn ?: 0L) }
+    var snils by remember { mutableStateOf(viewModel.businessUserInfo.snils ?: 0L) }
+    var inspectorsKnoId by remember { mutableStateOf(viewModel.inspectorKnoId) }
+    val knosNames = viewModel.listOfAllKnos.map {
+        it.name
+    }
+    var selectedKno by remember {
+        mutableStateOf("нажмите для выбора")
+    }
+    LaunchedEffect(key1 = true) {
+        Timber.d("@@@ LaunchedEffect(key1 = true)")
+        val kno = viewModel.getKnoById(viewModel.inspectorKnoId)
+        if (kno != null) {
+            Timber.d("@@@ LaunchedEffect(kno.name = ${kno.name})")
+            selectedKno = kno.name
+        }
+    }
+    LaunchedEffect(key1 = selectedKno) {
+        val kno = viewModel.getKnoByName(selectedKno)
+        if (kno != null) {
+            inspectorsKnoId = kno.id
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -53,11 +118,17 @@ private fun UserDetailInfoScreenContent() {
             item { EnterTextInfoItemBlock("Фамилия", "Фамилия", lastName) { lastName = it } }
             item { EnterTextInfoItemBlock("Имя", "Имя", firstName) { firstName = it } }
             item { EnterTextInfoItemBlock("Отчество", "Отчество", surName) { surName = it } }
-
-            item { EnterNumberInfoItemBlock("ИНН", "ИНН", inn) { inn = it } }
-
-            item { EnterNumberInfoItemBlock("СНИЛС", "СНИЛС", snils) { snils = it } }
-
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                item { EnterNumberInfoItemBlock("ИНН", "ИНН", inn) { inn = it } }
+                item { EnterNumberInfoItemBlock("СНИЛС", "СНИЛС", snils) { snils = it } }
+            } else {
+                item {
+                    SelectableItemBlock("Kонтрольно-надзорный орган", knosNames, selectedKno) {
+                        Timber.d("@@@ selected = $it")
+                        selectedKno = it
+                    }
+                }
+            }
             item { EnterTextInfoItemBlock("Email", "Email", email) { email = it } }
 
             item {
@@ -66,17 +137,30 @@ private fun UserDetailInfoScreenContent() {
                     onConfirm = {
                         Timber.d("@@@ onConfirm")
                         Timber.d("@@@ firstName = $firstName")
-                        viewModel.saveUserInfo(
-                            UserInfoNetwork(
-                                userId = viewModel.userId,
-                                email = email,
-                                firstName = firstName,
-                                lastName = lastName,
-                                surName = surName,
-                                inn = inn,
-                                snils = snils
+                        if (viewModel.userRole == UserRole.BUSINESS) {
+                            viewModel.saveBusinessUserInfo(
+                                BusinessUserInfoNetwork(
+                                    userId = viewModel.userId,
+                                    email = email,
+                                    firstName = firstName,
+                                    lastName = lastName,
+                                    surName = surName,
+                                    inn = inn,
+                                    snils = snils
+                                )
                             )
-                        )
+                        } else {
+                            viewModel.saveInspectorUserInfo(
+                                InspectorUserInfoNetwork(
+                                    userId = viewModel.userId,
+                                    email = email,
+                                    firstName = firstName,
+                                    lastName = lastName,
+                                    surName = surName,
+                                    knoId = inspectorsKnoId
+                                )
+                            )
+                        }
                         navigator.pop()
                     },
                     textOnDismiss = "Отменить",

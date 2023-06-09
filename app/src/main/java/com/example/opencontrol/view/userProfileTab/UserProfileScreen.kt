@@ -34,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,19 +43,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.core.stack.popUntil
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.ui.theme.ExitIconBackground
 import com.example.opencontrol.ui.theme.ExitIconIcon
 import com.example.opencontrol.ui.theme.LightColors
 import com.example.opencontrol.ui.theme.LightGrey
 import com.example.opencontrol.ui.theme.LightYellowIcon
 import com.example.opencontrol.ui.theme.OrangeBackground
-import com.example.opencontrol.view.enterScreen.EnterScreen
-import com.example.opencontrol.view.enterScreen.LoginScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
@@ -71,9 +68,20 @@ class UserProfileScreen : Screen {
 @Composable
 private fun UserProfileScreenContent() {
     val viewModel = getViewModel<MainViewModel>()
-    viewModel.getUserInfo()
+
+    if (viewModel.userRole == UserRole.BUSINESS) {
+        viewModel.getBusinessUserInfo()
+    } else {
+        viewModel.getInspectorUserInfo()
+    }
     val refreshing by remember { mutableStateOf(false) }
-    val state = rememberPullRefreshState(refreshing, { viewModel.getUserInfo() })
+    val state = rememberPullRefreshState(refreshing, {
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            viewModel.getBusinessUserInfo()
+        } else {
+            viewModel.getInspectorUserInfo()
+        }
+    })
 
     Box(Modifier.pullRefresh(state)) {
         LazyColumn() {
@@ -86,13 +94,20 @@ private fun UserProfileScreenContent() {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     UserPhotoFrame()
-                    UserName("${viewModel.userInfo.firstName ?: ""} ${viewModel.userInfo.lastName ?: "Заполните ФИО"} ")
-                    EmailChip(viewModel.userInfo.email ?: "Заполните Email")
+                    if (viewModel.userRole == UserRole.BUSINESS) {
+                        UserName("${viewModel.businessUserInfo.firstName ?: ""} ${viewModel.businessUserInfo.lastName ?: "Заполните ФИО"} ")
+                        EmailChip(viewModel.businessUserInfo.email ?: "Заполните Email")
+                    } else {
+                        UserName("${viewModel.inspectorUserInfo.firstName ?: ""} ${viewModel.inspectorUserInfo.lastName ?: "Заполните ФИО"} ")
+                        EmailChip(viewModel.inspectorUserInfo.email ?: "Заполните Email")
+                    }
                 }
             }
-            item { BusinessBlock() }
-            item { ViolationsBlock() }
-            item { AddBusinessButton() }
+            if (viewModel.userRole == UserRole.BUSINESS) {
+                item { BusinessBlock() }
+                item { ViolationsBlock() }
+                item { AddBusinessButton() }
+            }
             item { UserDetailInfoButton() }
             item { AccountExitButton() }
         }
@@ -354,7 +369,7 @@ private fun AccountExitButton() {
             .padding(vertical = 8.dp, horizontal = 16.dp)
             .fillMaxWidth()
             .clickable {
-                viewModel.userId = ""
+                viewModel.clearUser()
                 navigator.popUntilRoot()
             }
     ) {

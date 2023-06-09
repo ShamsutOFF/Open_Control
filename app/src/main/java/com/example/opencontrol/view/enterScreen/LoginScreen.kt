@@ -1,7 +1,6 @@
 package com.example.opencontrol.view.enterScreen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
@@ -49,6 +47,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.example.opencontrol.MainViewModel
+import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import com.example.opencontrol.ui.theme.Invisible
 import com.example.opencontrol.ui.theme.OrangeMainTransparent73
@@ -57,7 +56,7 @@ import com.example.opencontrol.view.MainScreen
 import org.koin.androidx.compose.getViewModel
 import timber.log.Timber
 
-data class LoginScreen(val role: String) : Screen {
+data class LoginScreen(val role: UserRole) : Screen {
     @Composable
     override fun Content() {
         LoginScreenContent(role)
@@ -66,7 +65,7 @@ data class LoginScreen(val role: String) : Screen {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-private fun LoginScreenContent(role: String) {
+private fun LoginScreenContent(role: UserRole) {
     val viewModel = getViewModel<MainViewModel>()
     Timber.d("@@@ Входим как $role")
     val navigator = LocalNavigator.currentOrThrow
@@ -101,13 +100,13 @@ private fun LoginScreenContent(role: String) {
                 UserRegisterInfoNetwork(
                     login = login,
                     password = password,
-                    role = role
+                    role = role.name
                 )
             )
         }
         RegisterTextButton { navigator.push(RegistrationScreen(role)) }
         if (viewModel.userId.isNotEmpty()) {
-            navigator.push(MainScreen)
+            navigator.push(MainScreen(role))
         }
     }
 }

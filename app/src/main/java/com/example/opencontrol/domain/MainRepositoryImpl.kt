@@ -1,7 +1,8 @@
 package com.example.opencontrol.domain
 
 import com.example.opencontrol.model.networkDTOs.AppointmentId
-import com.example.opencontrol.model.networkDTOs.BaseUserInfoNetwork
+import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
+import com.example.opencontrol.model.networkDTOs.BaseInspectorUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.IdNetwork
 import com.example.opencontrol.model.networkDTOs.ListAppointments
 import com.example.opencontrol.model.networkDTOs.ListFreeWindows
@@ -9,7 +10,8 @@ import com.example.opencontrol.model.networkDTOs.ListKno
 import com.example.opencontrol.model.networkDTOs.ListMeasures
 import com.example.opencontrol.model.networkDTOs.NoteInfoForConsultationNetwork
 import com.example.opencontrol.model.networkDTOs.QuestionNetwork
-import com.example.opencontrol.model.networkDTOs.UserInfoNetwork
+import com.example.opencontrol.model.networkDTOs.BusinessUserInfoNetwork
+import com.example.opencontrol.model.networkDTOs.InspectorUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -56,7 +58,7 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
             emit(baseApi.signUpToConsultation(noteInfoForConsultationNetwork))
         }
 
-    override fun getAllAppointments(userId: String): Flow<ListAppointments> =
+    override fun getAllBusinessAppointments(userId: String): Flow<ListAppointments> =
         flow {
             emit(baseApi.getAllBusinessAppointments(userId))
         }
@@ -66,13 +68,24 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
             emit(baseApi.cancelConsultation(AppointmentId(appointmentId)))
         }
 
-    override fun saveUserInfo(userInfoNetwork: UserInfoNetwork): Flow<Unit> =
+
+    override fun saveBusinessUserInfo(businessUserInfoNetwork: BusinessUserInfoNetwork): Flow<Unit> =
         flow {
-            emit(baseApi.addUserInfo(userInfoNetwork))
+            emit(baseApi.addBusinessUserInfo(businessUserInfoNetwork))
         }
 
-    override fun getUserInfo(userId: String): Flow<BaseUserInfoNetwork> =
+    override fun getBusinessUserInfo(userId: String): Flow<BaseBusinessUserInfoNetwork> =
         flow {
-            emit(baseApi.getUserInfo(userId))
+            emit(baseApi.getBusinessUserInfo(userId))
         }
+
+    override fun saveInspectorUserInfo(inspectorUserInfoNetwork: InspectorUserInfoNetwork): Flow<Unit> =
+        flow{
+        emit(baseApi.addInspectorUserInfo(inspectorUserInfoNetwork))
+    }
+
+    override fun getInspectorUserInfo(userId: String): Flow<BaseInspectorUserInfoNetwork> =
+        flow{
+        emit(baseApi.getInspectorUserInfo(userId))
+    }
 }
