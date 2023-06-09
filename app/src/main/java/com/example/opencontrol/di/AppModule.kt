@@ -55,7 +55,8 @@ val appModule = module {
             .build()
 
         Retrofit.Builder()
-            .baseUrl("http://46.243.201.1:5000")
+            .baseUrl("http://178.170.195.121:5000/")
+//            .baseUrl("http://46.243.201.1:5000")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

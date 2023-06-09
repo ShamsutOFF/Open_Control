@@ -28,6 +28,8 @@ import com.example.opencontrol.model.networkDTOs.BusinessUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.InspectorUserInfoNetwork
 import com.example.opencontrol.model.networkDTOs.UserRegisterInfoNetwork
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -55,7 +57,16 @@ class MainViewModel(
     var inspectorKnoId by mutableStateOf(0)
     var businessUserInfo by mutableStateOf(BusinessUserInfoNetwork(userId, "", "", "", "", 0L, 0L))
         private set
-    var inspectorUserInfo by mutableStateOf(InspectorUserInfoNetwork(userId, "", "", "", "", inspectorKnoId))
+    var inspectorUserInfo by mutableStateOf(
+        InspectorUserInfoNetwork(
+            userId,
+            "",
+            "",
+            "",
+            "",
+            inspectorKnoId
+        )
+    )
         private set
 
     var selectedDate: LocalDate by mutableStateOf(LocalDate.now())
@@ -71,7 +82,8 @@ class MainViewModel(
     var inspectorAppointments = mutableStateListOf<Appointments>()
 
     //save creds
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val sharedPreferencesEditor: SharedPreferences.Editor = sharedPreferences.edit()
 
     init {
@@ -107,9 +119,10 @@ class MainViewModel(
                 ),
                 status = it.status,
                 knoId = it.knoId,
-                knoName = it.knoName,
+                knoName = it.knoName ?: "",
+                businessUserId = it.businessUserId ?: "",
                 measureId = it.measureId,
-                measureName = it.measureName
+                measureName = it.measureName ?: ""
             )
         }
         return appointmentsInLocalDateTime
@@ -214,7 +227,11 @@ class MainViewModel(
 
     fun getAppointmentById(id: String): AppointmentsInLocalDateTime? {
         Timber.d("@@@ getAppointmentById(id = $id)")
-        return getAllBusinessAppointmentsInLDT().firstOrNull() {
+        if (userRole == UserRole.BUSINESS)
+            return getAllBusinessAppointmentsInLDT().firstOrNull() {
+                it.id == id
+            }
+        else return getAllInspectorAppointmentsInLDT().firstOrNull() {
             it.id == id
         }
     }
@@ -245,17 +262,17 @@ class MainViewModel(
 
 
     fun login(userRegisterInfoNetwork: UserRegisterInfoNetwork) {
-            viewModelScope.launch {
-                repository.login(userRegisterInfoNetwork)
-                    .flowOn(Dispatchers.IO)
-                    .catch { ex ->
-                        Timber.e(ex)
-                    }
-                    .collect {
-                        userId = it.id
-                        sharedPreferencesEditor.putString(USERID_TAG, userId)
-                    }
-            }
+        viewModelScope.launch {
+            repository.login(userRegisterInfoNetwork)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    userId = it.id
+                    sharedPreferencesEditor.putString(USERID_TAG, userId)
+                }
+        }
     }
 
     fun loggedIn() = sharedPreferences.contains(USERID_TAG).also {
@@ -346,6 +363,23 @@ class MainViewModel(
         Timber.d("@@@ 2getUserInfo() userInfo = $businessUserInfo")
     }
 
+    fun getBusinessUserInfoFromInspector(businessUserId: String): StateFlow<BusinessUserInfoNetwork?> {
+        Timber.d("@@@ getBusinessUserInfoFromInspector(businessUserId = $businessUserId)")
+        val businessUserInfoFlow = MutableStateFlow<BusinessUserInfoNetwork?>(null)
+        viewModelScope.launch {
+            repository.getBusinessUserInfo(businessUserId)
+                .flowOn(Dispatchers.IO)
+                .catch { ex ->
+                    Timber.e(ex)
+                }
+                .collect {
+                    Timber.d("@@@ getBusinessUserInfoFromInspector it.user = ${it.user})")
+                    businessUserInfoFlow.value = it.user
+                }
+        }
+        return businessUserInfoFlow
+    }
+
     fun clearUser() {
         userId = ""
         businessUserInfo = BusinessUserInfoNetwork(userId, "", "", "", "", 0L, 0L)
@@ -386,7 +420,7 @@ class MainViewModel(
     fun getAllInspectorAppointments() {
         Timber.d("@@@@@ getAllInspectorAppointments()")
         viewModelScope.launch {
-            repository.getAllInspectorAppointments(inspectorKnoId,userId)
+            repository.getAllInspectorAppointments(inspectorKnoId, userId)
                 .flowOn(Dispatchers.IO)
                 .catch { ex ->
                     Timber.e(ex)
@@ -397,6 +431,7 @@ class MainViewModel(
                 }
         }
     }
+
     fun getAllInspectorAppointmentsInLDT(): List<AppointmentsInLocalDateTime> {
         Timber.d("@@@ getAllInspectorAppointmentsInLDT inspectorAppointments = ${inspectorAppointments.toList()}")
         val appointmentsInLocalDateTime = inspectorAppointments.toList().map {
@@ -408,15 +443,16 @@ class MainViewModel(
                 ),
                 status = it.status,
                 knoId = it.knoId,
-                knoName = it.knoName,
+                knoName = it.knoName ?: "",
+                businessUserId = it.businessUserId ?: "",
                 measureId = it.measureId,
-                measureName = it.measureName
+                measureName = it.measureName ?: ""
             )
         }
         return appointmentsInLocalDateTime
     }
 
-    fun agreeAppointment(appointmentId:String) {
+    fun agreeAppointment(appointmentId: String) {
         Timber.d("@@@@@ getAllInspectorAppointments()")
         viewModelScope.launch {
             repository.agreeAppointment(AgreeNoteInfoNetwork(userId, appointmentId))

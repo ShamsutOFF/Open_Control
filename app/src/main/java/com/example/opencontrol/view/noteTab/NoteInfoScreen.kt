@@ -24,8 +24,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +46,7 @@ import com.example.opencontrol.MainViewModel
 import com.example.opencontrol.R
 import com.example.opencontrol.model.UserRole
 import com.example.opencontrol.model.networkDTOs.AppointmentsInLocalDateTime
+import com.example.opencontrol.model.networkDTOs.BusinessUserInfoNetwork
 import com.example.opencontrol.ui.theme.GreenStatus
 import com.example.opencontrol.ui.theme.GreyText
 import com.example.opencontrol.ui.theme.LightColors
@@ -80,7 +85,6 @@ private fun NoteInfoContent(noteId: String) {
             ) {
                 HeaderBlock("Информация о записи")
                 LazyColumn(
-                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item { VideoBlock() }
@@ -94,61 +98,65 @@ private fun NoteInfoContent(noteId: String) {
                             ImageBoxDummy()
                         }
                     }
-                }
-                NoteStatusBlock(note)
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                if (viewModel.userRole == UserRole.BUSINESS){
-                    EndEditingBlock(
-                        textOnDismiss = "Перенести",
-                        onDismiss = {
-                            Timber.d("@@@ Перенести")
-                            viewModel.cancelConsultation(note.id)
-                            navigator.replace(NewNoteScreen())
-                        },
-                        textOnConfirm = "Отменить",
-                        onConfirm = {
-                            openDialog.value = true
-                            Timber.d("@@@ Отменить")
-                        }
-                    )
-                    if (openDialog.value) {
-                        DeleteNoteDialog(onConfirm = {
-                            viewModel.cancelConsultation(note.id)
-                            openDialog.value = false
-                            navigator.pop()
-                        },
-                            onDismiss = { openDialog.value = false })
-                    }
-                } else {
-                    EndEditingBlock(
-                        textOnDismiss = "Отменить",
-                        onDismiss = {
-                            openDialog.value = true
-                            viewModel.cancelConsultation(note.id)
-                        },
-                        textOnConfirm = "Подтвердить",
-                        onConfirm = {
-                            Timber.d("@@@ Подтвердить")
-                            viewModel.agreeAppointment(noteId)
-                        }
-                    )
-                    if (openDialog.value) {
-                        DeleteNoteDialog(onConfirm = {
-                            viewModel.cancelConsultation(note.id)
-                            openDialog.value = false
-                            navigator.pop()
-                        },
-                            onDismiss = { openDialog.value = false })
-                    }
-                }
+                    item { NoteStatusBlock(note) }
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom
+                        ) {
+                            if (viewModel.userRole == UserRole.BUSINESS) {
+                                EndEditingBlock(
+                                    textOnDismiss = "Перенести",
+                                    onDismiss = {
+                                        Timber.d("@@@ Перенести")
+                                        viewModel.cancelConsultation(note.id)
+                                        navigator.replace(NewNoteScreen())
+                                    },
+                                    textOnConfirm = "Отменить",
+                                    onConfirm = {
+                                        openDialog.value = true
+                                        Timber.d("@@@ Отменить")
+                                    }
+                                )
+                                if (openDialog.value) {
+                                    DeleteNoteDialog(onConfirm = {
+                                        viewModel.cancelConsultation(note.id)
+                                        openDialog.value = false
+                                        navigator.pop()
+                                    },
+                                        onDismiss = { openDialog.value = false })
+                                }
+                            } else {
+                                EndEditingBlock(
+                                    textOnDismiss = "Отменить",
+                                    onDismiss = {
+                                        openDialog.value = true
+                                        viewModel.cancelConsultation(note.id)
+                                    },
+                                    textOnConfirm = "Подтвердить",
+                                    onConfirm = {
+                                        Timber.d("@@@ Подтвердить")
+                                        viewModel.agreeAppointment(noteId)
+                                        navigator.pop()
+                                    }
+                                )
+                                if (openDialog.value) {
+                                    DeleteNoteDialog(onConfirm = {
+                                        viewModel.cancelConsultation(note.id)
+                                        openDialog.value = false
+                                        navigator.pop()
+                                    },
+                                        onDismiss = { openDialog.value = false })
+                                }
+                            }
 
+                        }
+                    }
+                }
             }
+
         }
     } else navigator.pop()
 }
@@ -181,13 +189,44 @@ private fun VideoBlock() {
 
 @Composable
 private fun NoteInfoBlock(note: AppointmentsInLocalDateTime) {
+    Timber.d("@@@ NoteInfoBlock()")
+    val viewModel = getViewModel<MainViewModel>()
+    val businessUserInfoFlow =
+        remember { viewModel.getBusinessUserInfoFromInspector(note.businessUserId) }
+    var businessUserInfo by remember {
+        mutableStateOf(
+            BusinessUserInfoNetwork(
+                null, null, null, null, null, null, null,
+            )
+        )
+    }
+    LaunchedEffect(businessUserInfoFlow) {
+        // Подписываемся на businessUserInfoFlow только один раз
+        viewModel.getBusinessUserInfoFromInspector(note.businessUserId).collect { it ->
+            if (it != null) {
+                businessUserInfo = it
+            }
+
+        }
+    }
+    Timber.d("@@@ NoteInfoBlock()")
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        NoteTextBlock("Kонтрольно-надзорный орган", note.knoName)
-        NoteTextBlock("Вид контроля", note.measureName)
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            NoteTextBlock("Kонтрольно-надзорный орган", note.knoName)
+            NoteTextBlock("Вид контроля", note.measureName)
+        } else {
+            NoteTextBlock(
+                "ФИО:",
+                "${businessUserInfo?.lastName} ${businessUserInfo?.firstName} ${businessUserInfo?.surName}"
+            )
+            NoteTextBlock("ИНН:", "${businessUserInfo?.inn}")
+            NoteTextBlock("СНИЛС:", "${businessUserInfo?.snils}")
+            NoteTextBlock("Email::", "${businessUserInfo?.email}")
+        }
         NoteTextBlock("Тип встречи", "Видео-Конференция")
         NoteTextBlock("Дополнительная информация", "У меня нет вебкамеры")
     }

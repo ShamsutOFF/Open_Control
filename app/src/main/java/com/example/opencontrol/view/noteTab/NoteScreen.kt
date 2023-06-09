@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,7 +86,7 @@ private fun NoteScreenContent() {
     val scrollPosition =
         selectedIndex.takeIf { it != -1 } ?: appointments.lastIndex.takeIf { it != -1 } ?: 0
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         if (viewModel.userRole == UserRole.BUSINESS) {
             viewModel.getAllBusinessAppointments()
             viewModel.getBusinessUserInfo()
@@ -164,6 +165,16 @@ private fun MyNotesAndButtonsRow() {
 @OptIn(ExperimentalMaterial3Api::class)
 private fun NoteCard(note: AppointmentsInLocalDateTime) {
     val navigator = LocalNavigator.currentOrThrow
+    val viewModel = getViewModel<MainViewModel>()
+    val businessUserInfoFlow = viewModel.getBusinessUserInfoFromInspector(note.businessUserId)
+    val businessUserInfo by businessUserInfoFlow.collectAsState(null)
+    LaunchedEffect(businessUserInfoFlow) {
+        if (viewModel.userRole == UserRole.INSPECTION) {
+            businessUserInfoFlow.collect { userInfo ->
+                Timber.d("@@@ LaunchedEffect businessUserInfo = $userInfo")
+            }
+        }
+    }
     Card(
         onClick = { navigator.push(NoteInfoScreen(note.id)) },
         modifier = Modifier
@@ -172,29 +183,47 @@ private fun NoteCard(note: AppointmentsInLocalDateTime) {
         colors = CardDefaults.cardColors(
             containerColor = LightColors.onPrimary,
         )
-
     ) {
-        Text(
-            text = note.knoName,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
-        )
-        Text(
-            text = note.measureName,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            fontSize = 14.sp,
-            fontWeight = FontWeight.ExtraLight
-        )
+        if (viewModel.userRole == UserRole.BUSINESS) {
+            Text(
+                text = note.knoName,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = note.measureName,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraLight
+            )
+        } else {
+            Text(
+                text = "${businessUserInfo?.lastName} ${businessUserInfo?.firstName} ${businessUserInfo?.surName}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "email: ${businessUserInfo?.email}  ИНН: ${businessUserInfo?.inn}  СНИЛС: ${businessUserInfo?.snils}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.ExtraLight
+            )
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val formatter = DateTimeFormatter.ofPattern("HH:mm")
             val formattedTime = note.time.format(formatter)
