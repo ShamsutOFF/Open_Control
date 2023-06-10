@@ -89,6 +89,7 @@ dependencies {
 
     //Agora
     implementation ("com.github.AgoraIO-Community.VideoUIKit-Android:final:v4.0.0")
+    implementation ("io.agora.rtc:full-sdk:3.5.0")
 
     //Retrofit
     val retrofitVersion = "2.9.0"

@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AgoraToken
 import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.AppointmentId
 import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 
-class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: BaseApi) :
+class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: BaseApi, private val agoraApi: AgoraApi) :
     MainRepository {
     override fun getAnswerFromChat(question: QuestionNetwork) =
         flow {
@@ -99,5 +100,9 @@ class MainRepositoryImpl(private val chatApi: ChatApi, private val baseApi: Base
 
     override fun agreeAppointment(agreeNoteInfoNetwork: AgreeNoteInfoNetwork): Flow<Unit> = flow{
         emit(baseApi.agreeAppointment(agreeNoteInfoNetwork))
+    }
+
+    override fun getAgoraToken(userId: String): Flow<AgoraToken> = flow{
+        emit(agoraApi.getAgoraToken(userId))
     }
 }

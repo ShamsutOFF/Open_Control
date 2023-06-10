@@ -1,5 +1,6 @@
 package com.example.opencontrol.domain
 
+import com.example.opencontrol.model.networkDTOs.AgoraToken
 import com.example.opencontrol.model.networkDTOs.AgreeNoteInfoNetwork
 import com.example.opencontrol.model.networkDTOs.AnswerNetwork
 import com.example.opencontrol.model.networkDTOs.BaseBusinessUserInfoNetwork
@@ -46,4 +47,6 @@ interface MainRepository {
     fun getAllInspectorAppointments(inspectorKnoId: Int, userId: String): Flow<ListAppointments>
 
     fun agreeAppointment( agreeNoteInfoNetwork: AgreeNoteInfoNetwork): Flow<Unit>
+
+    fun getAgoraToken(userId: String): Flow<AgoraToken>
 }
